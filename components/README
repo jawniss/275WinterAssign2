@@ -1,0 +1,30 @@
+# ----------------------------------------------
+#   Name: Ricky Au
+#   ID: 1529429
+#   CMPUT 275, Winter 2018
+#
+#    Weekly Exercise 5: Graph Concepts
+# ----------------------------------------------
+
+Included Files:
+    * count_components.cpp
+    * digraph.h
+    * digraph.cpp
+    * README
+    * Makefile
+    * edmonton-roads-2.0.1.txt
+
+Running Instructions:
+    1) enter the file directory and type "make count_components" or just "make" into the terminal
+    2) then type "./count_components in the terminal
+    3) currently the file is set to give the user the number of connected Components from the graph created by the text file
+    4) if the user wants to clean they may type "make clean" in the terminal
+
+Sources:
+    1) breadthFirstSearch function taken from eclass
+    2) line 56 "if ( (find(alreadyFound.begin(), alreadyFound.end(), *iter) != alreadyFound.end()) == false){"
+    https://stackoverflow.com/questions/571394/how-to-find-out-if-an-item-is-present-in-a-stdvector
+    by user MSN
+    3) line 89 "while (getline(ss,tokenVert,',')){"
+    https://stackoverflow.com/questions/11719538/how-to-use-stringstream-to-separate-comma-separated-strings
+    by user jrok
