@@ -31,6 +31,9 @@ public:
   //1) check the heap isn't empty
   //2)
 
+  //1) check the heap isn't empty
+  //2)
+
   // returns the number of items held in the heap
   int size() const;
 
