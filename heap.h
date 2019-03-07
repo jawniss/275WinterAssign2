@@ -19,9 +19,18 @@ public:
   // insert an item with the given key
   // if the item is already in the heap, will still insert a new copy with this key
   void insert(const T& item, const K& key);
+  // steps on how to do this
+  //1) Pass item of key value where v is new vertex in the tree ie let v be a new vertex in the tree
+  //2) v is node that contains the pair(item,key) ie give v the pair(item,key)
+  //3) While loop (v is not the root and key(v)<key(parent(v)) )
+  //4) swap items and key between v and its parent if its true
+  //5) go up the tree and keep doing the same by letting v = parent(v)
 
   // pop the minimum item from the heap
   void popMin();
+
+  //1) check the heap isn't empty
+  //2)
 
   // returns the number of items held in the heap
   int size() const;
