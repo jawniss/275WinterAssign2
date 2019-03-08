@@ -31,9 +31,7 @@ public:
   //1) check the heap isn't empty
   //2)
 
-  //1) check the heap isn't empty
-  //2)
-
+  int parent(int i) { return floor((i-1)/2); }
   // returns the number of items held in the heap
   int size() const;
 
@@ -46,10 +44,14 @@ private:
 
 
 
-pair<long long, long long> complexNum;
-
 void insert(const T& item, const K& key) {
-  v =
+  pair<long long, long long> item;
+  item.first = first vertex key;
+  item.second = second vertex key;
+  pair< pair<long long, long long>, long long> element;
+  element.first = item;
+  element.second = manhatten distance;
+  while (element != heap[0] )
 }
 
 #endif
