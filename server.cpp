@@ -1,6 +1,8 @@
 #include "wdigraph.h"
 #include "dijkstra.h"
+#include "hashtable.h"
 
+#include "digraph.h" // do we need?
 
 #include <iostream>
 #include <queue>
@@ -142,7 +144,22 @@ void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& poin
 
 
 int main() {
-
+  long long startlat, startlon, endlat, endlon;
+  string letter;
+  cin >> letter >> startlat >> startlon >> endlat >> endlon;
+  /*
+need to count number of vertices, then out put the number of vertices
+  cout << *number of vertices* << endl;
+  int verticesnum = the number of vertices;
+  while (verticesnum != 0) {
+  cout << "W" << latitude << longitude << endl;
+  string confirmation;
+  cin >> confirmation;
+  if (confirmation == "A") {
+  verticesnum = verticesnum - 1;
+}
+}
+  */
 
 
 return 0;
