@@ -56,14 +56,14 @@ int size() const{
 
 
 void insert(const T& item, const K& key) {
-
+  // probably set item stuff elsewhere
   pair<long long, long long> item;
   item.first = vertex1; //first vertex key when we add later
   item.second = vectex2; //second vertex key when we add later
 
 
   pair< pair<long long, long long>, long long> element;// this is v
-  element.first = item;
+  element.first = item; // two vertexes
   element.second = key; //manhatten distance;
 
 
@@ -72,13 +72,15 @@ void insert(const T& item, const K& key) {
   // need to find the position of v we know initialy the position of v is the size
   int parentIndex = parentindex(childIndex); // position of the parent
   int keyParent = heap.second[parentIndex]// key of parent
-  int tempSwap;
 
   while ((element.second != heap.second[0]) && (element.second < keyParent )){
+    // swap the items and keys between v and parent(v)
     iter_swap(heap.begin() + parentIndex, heap.begin() + childIndex;
-    tempSwap = parentIndex;
-    parentIndex = childIndex;
-    childIndex = tempSwap;
+    // setting the indexes and setting v to be the parent(v) locations
+    childIndex = parentIndex;
+    parentIndex = parentindex(childIndex);
+    keyParent = heap.second[parentIndex]// key of new parent
+
 
   }
 }
