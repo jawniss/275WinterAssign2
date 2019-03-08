@@ -54,6 +54,9 @@ namespace std{
 
 // reading the city graph function that takes in a string text file
 void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& points){
+
+  Point coordinates;
+
   WDigraph graph;
   string line;
   ifstream infile (filename);
@@ -92,9 +95,11 @@ void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& poin
           }
         }
 
+        coordinates.lat = latitude;
+        coordinates.lon = longitude;
 
-        // add it to our hash table?
-        //graph.addVertex(vertex);
+        points.insert(vertex, coordinates);
+
 
       }
       // If in the line we find "E," we know its an Edge
@@ -134,8 +139,6 @@ void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& poin
     cout << "Error opening file";
     exit (1);
   }
-  // return our graph of class Digraph
-  return graph;
 }
 
 

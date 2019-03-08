@@ -88,7 +88,7 @@ void popMin(){
     //while(heapProperty == false){
       while ((vIndex > leftIndex) && (vIndex > rightIndex)){
         difference = leftIndex - rightIndex;
-        if (difference < 0){ // case where left side is smaller
+        if (difference <= 0){ // case where left side is smaller
           // traverse the left side
           //std::pair< std::pair<long long, long long>, long long> u = heap.at(leftIndex); // child of v with smallest key
           iter_swap(heap.begin() + vIndex, heap.begin() + leftIndex);// swap item and key between u and v
