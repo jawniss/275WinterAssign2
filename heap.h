@@ -48,6 +48,10 @@ private:
   // feel free to add appropriate private methods to help implement some functions
 };
 
+std::pair<T, K> min() const{
+  return heap.at(0); // return minimum pair
+}
+
 int size() const{
   // get the size of current instance of graph
   int size = heap.size();
@@ -57,12 +61,12 @@ int size() const{
 
 void insert(const T& item, const K& key) {
   // probably set item stuff elsewhere
-  pair<long long, long long> item;
+  std::pair<long long, long long> item;
   item.first = vertex1; //first vertex key when we add later
   item.second = vectex2; //second vertex key when we add later
 
 
-  pair< pair<long long, long long>, long long> element;// this is v
+  std::pair< std::pair<long long, long long>, long long> element;// this is v
   element.first = item; // two vertexes
   element.second = key; //manhatten distance;
 
@@ -71,17 +75,29 @@ void insert(const T& item, const K& key) {
   int childIndex = size()-1; // subratact one since vectors are indexed from zero
   // need to find the position of v we know initialy the position of v is the size
   int parentIndex = parentindex(childIndex); // position of the parent
-  int keyParent = heap.second[parentIndex]// key of parent
 
-  while ((element.second != heap.second[0]) && (element.second < keyParent )){
+  // this one probably doesn't work
+  //int keyParent = heap.second[parentIndex]
+
+  std::pair< std::pair<long long, long long>, long long> pairParent = heap.at(parentIndex);// key of parent
+  int keyParent = pairParent.second
+
+  std::pair< std::pair<long long, long long>, long long> firstPosition = heap.at(0);
+  int rootCost = firstPosition.second;
+
+  //while ((element.second != rootCost) && (element.second < keyParent )){
+  while ((key != rootCost) && (key < keyParent )){
     // swap the items and keys between v and parent(v)
     iter_swap(heap.begin() + parentIndex, heap.begin() + childIndex;
     // setting the indexes and setting v to be the parent(v) locations
     childIndex = parentIndex;
     parentIndex = parentindex(childIndex);
-    keyParent = heap.second[parentIndex]// key of new parent
+    pairParent = heap.at(parentIndex);// key of new parent
+    keyParent = pairParent.second;
 
-
+    // recheck who is the root
+    firstPosition = heap.at(0);
+    rootCost = firstPosition.second;
   }
 }
 
