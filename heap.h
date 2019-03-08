@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <utility> // for pair
+#include <algorithm> // neded for iter swap
 
 // T is the type of the item to be held
 // K is the type of the key associated with each item in the heap
@@ -38,6 +39,8 @@ public:
   int parentindex(int i) {
     return floor((i-1)/2);
   }
+
+
 private:
   // the array holding the heap
   std::vector< std::pair<T, K> > heap; // holds current instance of the graph we are considering
@@ -45,32 +48,40 @@ private:
   // feel free to add appropriate private methods to help implement some functions
 };
 
-
-
-void insert(const T& item, const K& key) {
-  pair<long long, long long> item;
-  item.first = vertex1 //first vertex key;
-  item.second = vectex2 //second vertex key;
-  pair< pair<long long, long long>, long long> element;// this is v
-  element.first = item;
-  element.second = key //manhatten distance;
-
-
-  heap.pushback(element);// pushing v into vector
-  int index = size()-1; // subratact one since vectors are indexed from zero
-  // need to find the position of v we know initialy the position of v is the size
-  int parentIndex = parentindex(index); // position of the parent
-  int
-
-  while ((element.second != heap.second[0]) && (element.second < )){
-
-  }
-}
-
 int size() const{
   // get the size of current instance of graph
   int size = heap.size();
   return size;
 }
+
+
+void insert(const T& item, const K& key) {
+
+  pair<long long, long long> item;
+  item.first = vertex1; //first vertex key when we add later
+  item.second = vectex2; //second vertex key when we add later
+
+
+  pair< pair<long long, long long>, long long> element;// this is v
+  element.first = item;
+  element.second = key; //manhatten distance;
+
+
+  heap.pushback(element);// pushing v into vector
+  int childIndex = size()-1; // subratact one since vectors are indexed from zero
+  // need to find the position of v we know initialy the position of v is the size
+  int parentIndex = parentindex(childIndex); // position of the parent
+  int keyParent = heap.second[parentIndex]// key of parent
+  int tempSwap;
+
+  while ((element.second != heap.second[0]) && (element.second < keyParent )){
+    iter_swap(heap.begin() + parentIndex, heap.begin() + childIndex;
+    tempSwap = parentIndex;
+    parentIndex = childIndex;
+    childIndex = tempSwap;
+
+  }
+}
+
 
 #endif
