@@ -41,6 +41,7 @@ public:
   int leftChildIndex(int i);
 
   int rightChildIndex(int i);
+  
 
 private:
   // the array holding the heap

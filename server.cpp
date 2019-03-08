@@ -1,8 +1,6 @@
 #include "wdigraph.h"
 #include "dijkstra.h"
-#include "hashtable.h"
 
-#include "digraph.h" // do we need?
 
 #include <iostream>
 #include <queue>
