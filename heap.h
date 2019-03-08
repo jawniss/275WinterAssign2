@@ -26,18 +26,21 @@ public:
   //4) swap items and key between v and its parent if its true
   //5) go up the tree and keep doing the same by letting v = parent(v)
 
-  // pop the minimum item from the heap
+  // pop the minimum item from the heap ie the very first index item in vector using min() first
   void popMin();
   //1) check the heap isn't empty
   //2)
 
-  int parent(int i) { return floor((i-1)/2); }
   // returns the number of items held in the heap
   int size() const;
 
+
+  int parentindex(int i) {
+    return floor((i-1)/2);
+  }
 private:
   // the array holding the heap
-  std::vector< std::pair<T, K> > heap;
+  std::vector< std::pair<T, K> > heap; // holds current instance of the graph we are considering
 
   // feel free to add appropriate private methods to help implement some functions
 };
@@ -46,12 +49,28 @@ private:
 
 void insert(const T& item, const K& key) {
   pair<long long, long long> item;
-  item.first = first vertex key;
-  item.second = second vertex key;
-  pair< pair<long long, long long>, long long> element;
+  item.first = vertex1 //first vertex key;
+  item.second = vectex2 //second vertex key;
+  pair< pair<long long, long long>, long long> element;// this is v
   element.first = item;
-  element.second = manhatten distance;
-  while (element != heap[0] )
+  element.second = key //manhatten distance;
+
+
+  heap.pushback(element);// pushing v into vector
+  int index = size()-1; // subratact one since vectors are indexed from zero
+  // need to find the position of v we know initialy the position of v is the size
+  int parentIndex = parentindex(index); // position of the parent
+  int
+
+  while ((element.second != heap.second[0]) && (element.second < )){
+
+  }
+}
+
+int size() const{
+  // get the size of current instance of graph
+  int size = heap.size();
+  return size;
 }
 
 #endif
