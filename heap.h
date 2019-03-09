@@ -8,6 +8,9 @@
 // T is the type of the item to be held
 // K is the type of the key associated with each item in the heap
 // The only requirement is that K is totally ordered and comparable via <
+
+using namespace std;
+
 template <class T, class K>
 class BinaryHeap {
 public:
@@ -41,7 +44,7 @@ public:
   int leftChildIndex(int i);
 
   int rightChildIndex(int i);
-  
+
 
 private:
   // the array holding the heap
@@ -50,23 +53,28 @@ private:
   // feel free to add appropriate private methods to help implement some functions
 };
 
-std::pair<T, K> min() const{
+template <class T, class K>
+std::pair<T, K> BinaryHeap<T,K>::min() const{
   return heap.at(0); // return minimum pair
 }
 
-int parentindex(int i) {
+template <class T, class K>
+int BinaryHeap<T,K>::parentindex(int i) {
   return floor((i-1)/2);
 }
 
-int leftChildIndex(int i){
+template <class T, class K>
+int BinaryHeap<T,K>::leftChildIndex(int i){
   return ((2*i) + 1);
 }
 
-int rightChildIndex(int i){
+template <class T, class K>
+int BinaryHeap<T,K>::rightChildIndex(int i){
   return ((2*i) + 2);
 }
 
-void popMin(){
+template <class T, class K>
+void BinaryHeap<T,K>::popMin(){
   if (size() == 0){
     cout << "heap is empty" <<endl;
   }else{
@@ -107,14 +115,15 @@ void popMin(){
   }
 }
 
-int size() const{
+template <class T, class K>
+int BinaryHeap<T,K>::size() const{
   // get the size of current instance of graph
   int size = heap.size();
   return size;
 }
 
-
-void insert(const T& item, const K& key) {
+template <class T, class K>
+void BinaryHeap<T,K>::insert(const T& item,const K& key) {
   /*
   // probably set item stuff elsewhere
   std::pair<long long, long long> item;
