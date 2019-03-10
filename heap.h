@@ -86,45 +86,86 @@ public:
       //std::pair<T,K > root = min();
 
       int lastIndex = size()-1; // last index
+      cout << "(inside)last index: " << lastIndex << endl;
       int rootIndex = 0;
       int vIndex;
       int rightIndex;
       int leftIndex;
+      int vCost;
+      int rightCost;
+      int leftCost;
       //bool heapProperty = false;
       int difference;
-      iter_swap(heap.begin() + rootIndex, heap.begin() + lastIndex);// swap the root with the
-      heap.pop_back(); // pop the last item from the vector
-      // iter_swap(heap.begin() + rootIndex, heap.begin() + lastIndex - 1);
-      std::pair<T,K > v = min(); // set v is the root vertex
-      vIndex = v.second;
+      iter_swap(heap.begin() + rootIndex, heap.begin() + lastIndex);// swap the root with the first and last
+      heap.pop_back(); // pop the last item from the vector (originally the root)
+      //std::pair<T,K > v = min(); // set v is the root vertex
+      vIndex = rootIndex;
+      cout << "(inside)vindex: " << vIndex << endl;
+      std::pair<T, K> v = heap.at(vIndex);
+      vCost = v.second;
+
       rightIndex = rightChildIndex(vIndex);
+      cout << "(inside)rightindex: " << rightIndex << endl;
+      std::pair<T, K> right = heap.at(rightIndex);
+      rightCost = right.second;
+
       leftIndex = leftChildIndex(vIndex);
+      cout << "(inside)leftindex: " << leftIndex << endl;
+      std::pair<T, K> left = heap.at(leftIndex);
+      leftCost = left.second;
+
       // since the heap vector we bring in is already all in order except root we move down the tree
       // while heapProperty not satisfied
       //while(heapProperty == false){
-        while ((vIndex > leftIndex) && (vIndex > rightIndex)){
-          difference = leftIndex - rightIndex;
+        while ((vCost > leftCost) || (vCost > rightCost)){
+          /*
+          cout << "(notsatisfied)vindex: " << vIndex << endl;
+          cout << "(notsatisfied)rightindex: " << rightIndex << endl;
+          cout << "(notsatisfied)leftindex: " << leftIndex << endl;
+          */
+          difference = leftCost - rightCost;
           if (difference <= 0){ // case where left side is smaller
             // traverse the left side
             //std::pair< std::pair<long long, long long>, long long> u = heap.at(leftIndex); // child of v with smallest key
             iter_swap(heap.begin() + vIndex, heap.begin() + leftIndex);// swap item and key between u and v
             vIndex = leftIndex;
+            v = heap.at(vIndex);
+            vCost = v.second;
+
             rightIndex = rightChildIndex(vIndex);
+            right = heap.at(rightIndex);
+            rightCost = right.second;
+
             leftIndex = leftChildIndex(vIndex);
+            left = heap.at(leftIndex);
+            leftCost = left.second;
+            /*
+            cout << "after swap to left rightindex: " << rightIndex << endl;
+            cout << "after swap to left leftindex: " << leftIndex << endl;
+            */
+
           } else if (difference > 0){ // case where right side is smaller
             iter_swap(heap.begin() + vIndex, heap.begin() + rightIndex);// swap item and key between u and v
             vIndex = rightIndex;
+            v = heap.at(vIndex);
+            vCost = v.second;
+
             rightIndex = rightChildIndex(vIndex);
+            right = heap.at(rightIndex);
+            rightCost = right.second;
+
             leftIndex = leftChildIndex(vIndex);
+            left = heap.at(leftIndex);
+            leftCost = left.second;
+            /*
+            cout << "after swap to right rightindex: " << rightIndex << endl;
+            cout << "after swap to right leftindex: " << leftIndex << endl;
+            */
           }
         }
       //}
     //}
-    std::pair<T,K > tempheap0 = heap.at(0);
-    for (int i = 0; i < heap.size() - 1; i++) {
-      heap.at(i) = heap.at(i+1);
-    }
-    heap.at(heap.size()-1) = tempheap0;
+
   }
 
 
