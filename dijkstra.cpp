@@ -89,19 +89,5 @@ return reached
         }
       }
     }
-
-    /*
-    // int v = start->first, u = start->second.first, d = start->second.second;
-    // events.erase(start);
-    if (tree.find(v) != tree.end()) {
-      continue;
-    }
-    tree[v] = pair<int, int> (u, d);
-    */
-
   }
-}
-
-int main() {
-  return 0;
 }

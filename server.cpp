@@ -1,7 +1,5 @@
 #include "wdigraph.h"
 #include "dijkstra.h"
-#include "hashtable.h"
-
 #include "digraph.h" // do we need?
 
 #include <iostream>
@@ -13,6 +11,7 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <utility> // for pair
 
 // from hash example
 #include <iomanip>
@@ -24,6 +23,7 @@ struct Point {
   long long lat; // latitude of the point
   long long lon; // longitude of the point
 
+  /*
   // constructor that takes in latitude and longitude
 	Point(long long latitude,long long longitude):
 		lat(latitude), lon(longitude)
@@ -36,6 +36,7 @@ struct Point {
   bool operator!=(const Point& lt,const Point& ln) const {
     return ((lat == lt.lat) && (lon == ln.lon));
   }
+  */
 };
 
 long long manhattan(const Point& pt1, const Point& pt2) {
@@ -65,11 +66,14 @@ namespace std{
 
 // reading the city graph function that takes in a string text file
 void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& points){
-
   Point coordinates;
-
-  WDigraph graph;
+  Point point1;
+  Point point2;
   string line;
+  float latFloat;
+  long long latitude;
+  float lonFloat;
+  long long longitude;
   ifstream infile (filename);
   // open the text file
   if (infile.is_open()){
@@ -90,15 +94,15 @@ void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& poin
           }
           if (countVert == 3){
             // convert value to float from string
-            float latFloat = stof(tokenVert)*100000;
+            latFloat = stof(tokenVert)*100000;
             // convert to long long
-            long long latitude = static_cast <long long>(latFloat);
+            latitude = static_cast <long long>(latFloat);
           }
           if (countVert == 4){
             // convert value to float from string
-            float lonFloat = stof(tokenVert)*100000;
+            lonFloat = stof(tokenVert)*100000;
             // convert to long long
-            long long longitude = static_cast <long long>(lonFloat);
+            longitude = static_cast <long long>(lonFloat);
           }
           // don't iterate the rest since we only need the vertex, longitude and latitude
           if (countVert > 4){
@@ -108,10 +112,9 @@ void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& poin
 
         coordinates.lat = latitude;
         coordinates.lon = longitude;
-
-        points.insert(vertex, coordinates);
-
-
+        // to insert into a unordered map
+        pair<int,Point>vertCord(vertex,coordinates);
+        points.insert(vertCord);
       }
       // If in the line we find "E," we know its an Edge
       else if(line.find("E,") != (string::npos)){
@@ -138,8 +141,12 @@ void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& poin
             break;
           }
         }
+        // let it be struct
+        point1 = points[u];
+        point2 = points[v];
+        long long dist = manhattan(point1,point2);
         // directed graph so we need the given way
-        graph.addEdge(u,v);
+        graph.addEdge(u,v,dist);
       }
     }
     // close the file
@@ -147,7 +154,7 @@ void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& poin
   }
   // case to exit if the file doesn't open
   else{
-    cout << "Error opening file";
+    cout << "Error opening file"<< endl;
     exit (1);
   }
 }
@@ -155,23 +162,12 @@ void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& poin
 
 
 int main() {
-  long long startlat, startlon, endlat, endlon;
-  string letter;
-  cin >> letter >> startlat >> startlon >> endlat >> endlon;
-  /*
-need to count number of vertices, then out put the number of vertices
-  cout << *number of vertices* << endl;
-  int verticesnum = the number of vertices;
-  while (verticesnum != 0) {
-  cout << "W" << latitude << longitude << endl;
-  string confirmation;
-  cin >> confirmation;
-  if (confirmation == "A") {
-  verticesnum = verticesnum - 1;
-}
-}
-  */
+  WDigraph graph;
+  unordered_map<int, Point> points;
+  readGraph("edmonton-roads-2.0.1.txt", graph, points);
 
+
+    cout << "compiled" << endl;
 
 return 0;
 }

@@ -5,7 +5,7 @@ PROGS= dijkstra server
 OBJS= server.o dijkstra.o digraph.o
 
 # executable targets
-all: dijkstra server
+all: server
 
 dijkstra: dijkstra.o digraph.o
 	$(CC) dijkstra.o digraph.o -o dijkstra $(LFLAGS)
@@ -22,7 +22,7 @@ tester: tester.cpp heap.h
 server.o: server.cpp digraph.h wdigraph.h
 	$(CC) server.cpp -o server.o $(CFLAGS)
 
-dijkstra.o: dijkstra.cpp digraph.h wdigraph.h heap.h dijkstra.h
+dijkstra.o: dijkstra.cpp dijkstra.h heap.h
 	$(CC) dijkstra.cpp -o dijkstra.o $(CFLAGS)
 
 digraph.o: digraph.cpp digraph.h
