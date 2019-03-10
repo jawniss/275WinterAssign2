@@ -1,131 +1,177 @@
-#include <string>
-#include <iostream>
-#include <fstream>
-#include "dijkstra.h"
-#include "digraph.h"
 #include "wdigraph.h"
+#include "dijkstra.h"
+#include "hashtable.h"
+
+#include "digraph.h" // do we need?
+
+#include <iostream>
+#include <queue>
+#include <unordered_map>
+#include <vector>
+#include <list>
+#include <algorithm>
+#include <fstream>
+#include <string>
+#include <sstream>
+
+// from hash example
+#include <iomanip>
+#include <cassert>
+
+using namespace std;
 
 struct Point {
-    ll lat;
-    ll lon;
+  long long lat; // latitude of the point
+  long long lon; // longitude of the point
+
+  // constructor that takes in latitude and longitude
+	Point(long long latitude,long long longitude):
+		lat(latitude), lon(longitude)
+	{
+	}
+  // two records with the same longitude and latitude
+  bool operator==(const Point& lt,const Point& ln) const {
+    return ((lat == lt.lat) && (lon == ln.lon));
+  }
+  bool operator!=(const Point& lt,const Point& ln) const {
+    return ((lat == lt.lat) && (lon == ln.lon));
+  }
 };
 
-ll manhattan(const Point& pt1, const Point& pt2) {
-    // calculate man dist
-    ll dist = abs(pt1.lat - pt2.lat) + abs(pt1.lon - pt2.lon);
-    return dist;
+long long manhattan(const Point& pt1, const Point& pt2) {
+// Return the Manhattan distance between the two given points
+  long long latitude1 = pt1.lat;
+  long long latitude2 = pt2.lat;
+  long long longitude1 = pt1.lon;
+  long long longitude2 = pt2.lon;
+
+  long long distance = abs(latitude1  - latitude2) + abs(longitude1 - longitude2);
+  return distance;
 }
 
+/*
+// hash function to overide operator() while calculating the hash value
+namespace std{
+	template <>
+	struct hash<StudentRecord>{
+	  std::size_t operator()(const StudentRecord& record) const{
+	    using std::size_t;
+	    using std::hash;
+	    return (hash<int>()(record.mId));
+	  }
+	};
+}
+*/
 
-void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& points) {
-    /* method to open and read from files found from:
-    cplusplus.com/doc/tutorial/files/             */
-    ifstream file;  // file object
-    string token;
-    char delim = ',';  // the delimeter of choice
-    int ID;
-    float coord;
-    Point p, p1, p2;
-    file.open(filename);  // opening the file
-    if (file.is_open()) {  // if the file is open...
-        while (getline(file, token, delim)) {  // while there is still a token
-                                               // to get...
-            if (token == "V") {
-                // add a vertex
-                getline(file, token, delim);
-                ID = stoi(token);
-                getline(file, token, delim);  // check order
-                coord = stof(token);
-                coord *= 100000;
-                p.lat = static_cast<ll>(coord);
-                getline(file, token);  // not needed for the exercise
-                coord = stof(token);
-                coord *= 100000;
-                p.lon = static_cast<ll>(coord);
-                // put point in the map
-                points[ID] = p;
-                //graph.addVertex(ID);
-            } else if (token == "E") {
-                // add an edge
-                getline(file, token, delim);
-                int id1 = stoi(token);
-                getline(file, token, delim);
-                int id2 = stoi(token);
-                getline(file, token);
-                string name = token;
-                // search the map for given id's
-                p1 = points[id1];
-                p2 = points[id2];
-                // calc man dist, pass in saved points
-                ll weight = manhattan(p1, p2);
-                graph.addEdge(id1, id2, weight);
-            }
+// reading the city graph function that takes in a string text file
+void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& points){
+
+  Point coordinates;
+
+  WDigraph graph;
+  string line;
+  ifstream infile (filename);
+  // open the text file
+  if (infile.is_open()){
+    // while loop that reads each line of the text file
+    while (getline(infile,line)){
+      // If in the line we find "V," we know its a Vertex
+      if(line.find("V,") != (string::npos)){
+        int vertex = 0;
+        istringstream ss(line);
+        string tokenVert;
+        int countVert = 0;
+        while (getline(ss,tokenVert,',')){
+          countVert++;
+          // take value after first comma
+          if (countVert == 2){
+            // convert value to integer from string
+            vertex = stoi(tokenVert,nullptr,10);
+          }
+          if (countVert == 3){
+            // convert value to float from string
+            float latFloat = stof(tokenVert)*100000;
+            // convert to long long
+            long long latitude = static_cast <long long>(latFloat);
+          }
+          if (countVert == 4){
+            // convert value to float from string
+            float lonFloat = stof(tokenVert)*100000;
+            // convert to long long
+            long long longitude = static_cast <long long>(lonFloat);
+          }
+          // don't iterate the rest since we only need the vertex, longitude and latitude
+          if (countVert > 4){
+            break;
+          }
         }
-    } else {
-        /*Error message in case the file is not found. */
-        cout << "ERROR. Unable to open the file " << filename << "." << endl;
+
+        coordinates.lat = latitude;
+        coordinates.lon = longitude;
+
+        points.insert(vertex, coordinates);
+
+
+      }
+      // If in the line we find "E," we know its an Edge
+      else if(line.find("E,") != (string::npos)){
+        int u = 0;
+        int v = 0;
+        istringstream ss(line);
+        string tokenEdge;
+        int countEdge = 0;
+        // obtain the u and v edges
+        while (getline(ss,tokenEdge,',')){
+          countEdge++;
+          // take value after first comma
+          if (countEdge == 2){
+            // convert it from string to integer
+            u = stoi(tokenEdge,nullptr,10);
+          }
+          // take value after second comma
+          if (countEdge == 3){
+            // convirt it from string to integer
+            v = stoi(tokenEdge,nullptr,10);
+          }
+          // don't bother iterating the rest since we only need edges
+          if (countEdge > 3){
+            break;
+          }
+        }
+        // directed graph so we need the given way
+        graph.addEdge(u,v);
+      }
     }
-    file.close();  // closing the file
+    // close the file
+    infile.close();
+  }
+  // case to exit if the file doesn't open
+  else{
+    cout << "Error opening file";
+    exit (1);
+  }
 }
 
-
-int getInput(unordered_map<int, Point> points) {
-    string letter;
-    ll startLon, startLat;//, endLon, endLat;
-    cin >> letter;
-
-    if (letter == "R") {
-        cin >> startLat >> startLon; //>> endLat >> endLon;
-        Point start;//, end;
-        start.lat = startLat;
-        start.lon = startLon;
-        //end.lat = endLat;
-        //end.lon = endLon;
-        //Point startPoint = points[30198550];
-        //ll startWeight = manhattan(start, startPoint);
-        ll startWeight = 1000000;
-        ll lat = 0;
-        ll lon = 0;
-        for (auto p: points) {
-            ll newWeight = manhattan(start, p.second);
-            if (newWeight < startWeight) {
-                startWeight = newWeight;
-                lat = p.second.lat;
-                lon = p.second.lon;
-                //auto startPoint = p;
-            }
-        }
-        for (auto i: points) {
-            if (i.second.lat == lat && i.second.lon == lon) {
-                return i.first;
-            }
-        }
-    } else if (letter == "A") {
-        // continue
-        return -1;
-    }
-
-
-}
 
 
 int main() {
-    WDigraph graph;
-    unordered_map<int, Point> points;
-    readGraph("edmonton-roads-2.0.1.txt", graph, points);
-    // find the start and ending point IDs
-    // pass start vertex into dijkstra
-    // find the ending point in the search tree???
-    // track the path down the tree
+  long long startlat, startlon, endlat, endlon;
+  string letter;
+  cin >> letter >> startlat >> startlon >> endlat >> endlon;
+  /*
+need to count number of vertices, then out put the number of vertices
+  cout << *number of vertices* << endl;
+  int verticesnum = the number of vertices;
+  while (verticesnum != 0) {
+  cout << "W" << latitude << longitude << endl;
+  string confirmation;
+  cin >> confirmation;
+  if (confirmation == "A") {
+  verticesnum = verticesnum - 1;
+}
+}
+  */
 
-    // int -> current vertex
-    // PLI -> ll: weight of next vertex, int: next vertex
-    int startVertex = getInput(points);
-    unordered_map<int, PLI> heapTree;
-    dijkstra(graph, startVertex , heapTree);
-    for (auto i: heapTree) {
-        cout << i.second.second << endl;
-    }
-    //bool processed = false;
-    return 0;
+
+return 0;
 }

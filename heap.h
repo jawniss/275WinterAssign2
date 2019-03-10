@@ -72,10 +72,12 @@ public:
   }
   // pop the minimum item from the heap ie the very first index item in vector using min() first
   void popMin(){
+    /*
     if (size() == 0){
       cout << "heap is empty" <<endl;
-    }else{
-      std::pair<T,K > root = min();
+    }else{*/
+      //std::pair<T,K > root = min();
+      
       int lastIndex = size()-1; // last index
       int rootIndex = 0;
       int vIndex;
@@ -109,7 +111,7 @@ public:
           }
         }
       //}
-    }
+    //}
 
   }
 

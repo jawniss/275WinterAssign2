@@ -7,8 +7,8 @@ OBJS= server.o dijkstra.o digraph.o
 # executable targets
 all: dijkstra server
 
-dijkstra: dijkstra.o heap.o digraph.o
-	$(CC) dijkstra.o heap.o digraph.o -o dijkstra $(LFLAGS)
+dijkstra: dijkstra.o digraph.o
+	$(CC) dijkstra.o digraph.o -o dijkstra $(LFLAGS)
 
 server: server.o dijkstra.o digraph.o
 	$(CC) server.o dijkstra.o digraph.o -o server $(LFLAGS)
