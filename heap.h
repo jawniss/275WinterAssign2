@@ -94,7 +94,7 @@ public:
       int difference;
       iter_swap(heap.begin() + rootIndex, heap.begin() + lastIndex);// swap the root with the
       heap.pop_back(); // pop the last item from the vector
-      iter_swap(heap.begin() + rootIndex, heap.begin() + lastIndex - 1);
+      // iter_swap(heap.begin() + rootIndex, heap.begin() + lastIndex - 1);
       std::pair<T,K > v = min(); // set v is the root vertex
       vIndex = v.second;
       rightIndex = rightChildIndex(vIndex);
@@ -120,6 +120,11 @@ public:
         }
       //}
     //}
+    std::pair<T,K > tempheap0 = heap.at(0);
+    for (int i = 0; i < heap.size() - 1; i++) {
+      heap.at(i) = heap.at(i+1);
+    }
+    heap.at(heap.size()-1) = tempheap0;
   }
 
 
