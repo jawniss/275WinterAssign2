@@ -86,7 +86,7 @@ public:
       //std::pair<T,K > root = min();
 
       int lastIndex = size()-1; // last index
-      cout << "(inside)last index: " << lastIndex << endl;
+      //cout << "(inside)last index: " << lastIndex << endl;
       int rootIndex = 0;
       int vIndex;
       int rightIndex;
@@ -100,17 +100,17 @@ public:
       heap.pop_back(); // pop the last item from the vector (originally the root)
       //std::pair<T,K > v = min(); // set v is the root vertex
       vIndex = rootIndex;
-      cout << "(inside)vindex: " << vIndex << endl;
+      //cout << "(inside)vindex: " << vIndex << endl;
       std::pair<T, K> v = heap.at(vIndex);
       vCost = v.second;
 
       rightIndex = rightChildIndex(vIndex);
-      cout << "(inside)rightindex: " << rightIndex << endl;
+      //cout << "(inside)rightindex: " << rightIndex << endl;
       std::pair<T, K> right = heap.at(rightIndex);
       rightCost = right.second;
 
       leftIndex = leftChildIndex(vIndex);
-      cout << "(inside)leftindex: " << leftIndex << endl;
+      //cout << "(inside)leftindex: " << leftIndex << endl;
       std::pair<T, K> left = heap.at(leftIndex);
       leftCost = left.second;
 
@@ -119,44 +119,78 @@ public:
       //while(heapProperty == false){
         while ((vCost > leftCost) || (vCost > rightCost)){
           /*
-          cout << "(notsatisfied)vindex: " << vIndex << endl;
-          cout << "(notsatisfied)rightindex: " << rightIndex << endl;
-          cout << "(notsatisfied)leftindex: " << leftIndex << endl;
+          cout << "went in whiel" << endl;
+
+          cout << "(notsatisfied)vCOst: " << vCost<< endl;
+          cout << "(notsatisfied)rightcost: " << rightCost << endl;
+          cout << "(notsatisfied)leftcost: " << leftCost << endl;
           */
+
           difference = leftCost - rightCost;
           if (difference <= 0){ // case where left side is smaller
             // traverse the left side
+            lastIndex = size()-1;
+
             //std::pair< std::pair<long long, long long>, long long> u = heap.at(leftIndex); // child of v with smallest key
             iter_swap(heap.begin() + vIndex, heap.begin() + leftIndex);// swap item and key between u and v
             vIndex = leftIndex;
             v = heap.at(vIndex);
             vCost = v.second;
 
+
             rightIndex = rightChildIndex(vIndex);
-            right = heap.at(rightIndex);
-            rightCost = right.second;
+            if (rightIndex > lastIndex){
+              break;
+            }else{
+              right = heap.at(rightIndex);
+              rightCost = right.second;
+            }
 
             leftIndex = leftChildIndex(vIndex);
-            left = heap.at(leftIndex);
-            leftCost = left.second;
+            if (leftIndex > lastIndex){
+              break;
+            }else{
+              left = heap.at(leftIndex);
+              leftCost = left.second;
+            }
             /*
             cout << "after swap to left rightindex: " << rightIndex << endl;
             cout << "after swap to left leftindex: " << leftIndex << endl;
             */
+            /*
+            cout << "(leftcase)vCOst: " << vCost<< endl;
+            cout << "(leftcase)rightcost: " << rightCost << endl;
+            cout << "(leftcase)leftcost: " << leftCost << endl;
+            */
 
           } else if (difference > 0){ // case where right side is smaller
+            lastIndex = size()-1;
+
             iter_swap(heap.begin() + vIndex, heap.begin() + rightIndex);// swap item and key between u and v
             vIndex = rightIndex;
             v = heap.at(vIndex);
             vCost = v.second;
 
             rightIndex = rightChildIndex(vIndex);
-            right = heap.at(rightIndex);
-            rightCost = right.second;
+            if (rightIndex > lastIndex){
+              break;
+            }else{
+              right = heap.at(rightIndex);
+              rightCost = right.second;
+            }
 
             leftIndex = leftChildIndex(vIndex);
-            left = heap.at(leftIndex);
-            leftCost = left.second;
+            if (leftIndex > lastIndex){
+              break;
+            }else{
+              left = heap.at(leftIndex);
+              leftCost = left.second;
+            }
+            /*
+            cout << "(rightcase)vCOst: " << vCost<< endl;
+            cout << "(rightcase)rightcost: " << rightCost << endl;
+            cout << "(rightcase)leftcost: " << leftCost << endl;
+            */
             /*
             cout << "after swap to right rightindex: " << rightIndex << endl;
             cout << "after swap to right leftindex: " << leftIndex << endl;
@@ -165,7 +199,7 @@ public:
         }
       //}
     //}
-
+    //cout <<"done" << endl;
   }
 
 
