@@ -23,11 +23,19 @@ int main() {
     cout << "heap min cost: "<<Bheap.min().second << endl;
     cout << "heap min pair "<<Bheap.min().first << endl;
 
+    Bheap.print();
+
     Bheap.popMin();
     cout << "size after popmin: "<< Bheap.size() << endl;
     cout << "heap min cost: "<<Bheap.min().second << endl;
     cout << "heap min pair "<<Bheap.min().first << endl;
 
+    Bheap.print();
+    Bheap.popMin();
+    cout << "size after popmin: "<< Bheap.size() << endl;
+    cout << "heap min cost: "<<Bheap.min().second << endl;
+    cout << "heap min pair "<<Bheap.min().first << endl;
+    Bheap.print();
 
     return 0;
 }

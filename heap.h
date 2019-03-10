@@ -24,6 +24,13 @@ public:
     //return heap[0]; // return minimum pair
     return heap.at(0);
   }
+  void print() {
+    for (int i = 0; i < heap.size(); i++) {
+      std::pair<T, K> show;
+      show = heap.at(i);
+      cout << show.first << ' '<< show.second << endl;
+    }
+  }
 
   // insert an item with the given key
   // if the item is already in the heap, will still insert a new copy with this key
@@ -77,7 +84,7 @@ public:
       cout << "heap is empty" <<endl;
     }else{*/
       //std::pair<T,K > root = min();
-      
+
       int lastIndex = size()-1; // last index
       int rootIndex = 0;
       int vIndex;
@@ -87,6 +94,7 @@ public:
       int difference;
       iter_swap(heap.begin() + rootIndex, heap.begin() + lastIndex);// swap the root with the
       heap.pop_back(); // pop the last item from the vector
+      iter_swap(heap.begin() + rootIndex, heap.begin() + lastIndex - 1);
       std::pair<T,K > v = min(); // set v is the root vertex
       vIndex = v.second;
       rightIndex = rightChildIndex(vIndex);
@@ -112,7 +120,6 @@ public:
         }
       //}
     //}
-
   }
 
 

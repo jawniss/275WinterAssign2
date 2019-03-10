@@ -7,7 +7,7 @@
 
 typedef pair<long long, int> PLI;
 
-void dijkstra(const WDigraph& graph, long long startVertex,  unordered_map<int, PLI>& tree);
+void dijkstra(const WDigraph& graph, int startVertex,  unordered_map<int, PLI>& tree);
 
 
 #endif
