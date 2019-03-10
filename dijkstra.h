@@ -1,8 +1,16 @@
 #ifndef _DIJKSTRA_H_
 #define _DIJKSTRA_H_
 
-void dijkstra(const WDigraph& graph, long long startVertex, unordered_map<int, pair<int, long long>& tree) {
-}
+#include <unordered_set>
+#include <unordered_map>
+#include "wdigraph.h"
+
+typedef long long ll;
+typedef pair<ll, int> PLI;
 
 
-#endif
+void dijkstra(const WDigraph& graph, int startVertex, unordered_map<int, PLI>& tree);
+
+
+
+#endif /* DIJSKTRA_H */
