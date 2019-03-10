@@ -1,37 +1,32 @@
-CC = g++
-OBJS = dijkstra.o server.o digraph.o
-CFLAGS = -c -Wall -std=c++11 -O3
-LFLAGS =
-EXC = server
+CC=g++
+CFLAGS=-c -Wall -O2 -std=c++11
+LFLAGS=
+PROGS= dijkstra server
+OBJS= server.o dijkstra.o digraph.o
 
-# Main target that runs when only 'make' is entered in the terminal
-all: $(EXC)
+# executable targets
+all: dijkstra server
 
-# This depends on the object existing.
-# Linking the object to the executable.
-test: test.cpp heap.h
-	$(CC) test.cpp -o test
-	./test
-# This depends on the object existing.
-# Linking the object to the executable.
-$(EXC): server.o digraph.o dijkstra.o
-	$(CC) server.o digraph.o dijkstra.o -o server $(LFLAGS)
+dijkstra: dijkstra.o heap.o digraph.o
+	$(CC) dijkstra.o heap.o digraph.o -o dijkstra $(LFLAGS)
+
+server: server.o dijkstra.o digraph.o
+	$(CC) server.o dijkstra.o digraph.o -o server $(LFLAGS)
+
+tester: tester.cpp heap.h
+	$(CC) tester.cpp -o tester $(LFLAGS)
+
+
+# object targets
+
+server.o: server.cpp digraph.h wdigraph.h
+	$(CC) server.cpp -o server.o $(CFLAGS)
+
+dijkstra.o: dijkstra.cpp digraph.h wdigraph.h heap.h dijkstra.h
+	$(CC) dijkstra.cpp -o dijkstra.o $(CFLAGS)
 
 digraph.o: digraph.cpp digraph.h
 	$(CC) digraph.cpp -o digraph.o $(CFLAGS)
-# If the object doesn't exist it runs this target.
-# This runs when any of the files listed in the arguments have changed.
-# This compiles the dijkstra cpp file into an object.
-dijkstra.o: dijkstra.cpp dijkstra.h heap.h
-	$(CC) dijkstra.cpp -o dijkstra.o $(CFLAGS)
-# If the object doesn't exist it runs this target.
-# This runs when any of the files listed in the arguments have changed.
-# This compiles the server cpp file into an object.
-server.o: server.cpp digraph.h wdigraph.h
-	$(CC) server.cpp -o server.o $(CFLAGS)
-# If the user enters 'make clean' into the terminal.
-# This deletes the executables and the objects.
-# The @ symbol suppresses the output of an error to the terminal if
-# the files to delete do not exist.
+
 clean:
-	@rm -f $(OBJS) $(EXC) test
+	@rm $(OBJS) $(PROGS)

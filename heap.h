@@ -3,105 +3,153 @@
 
 #include <vector>
 #include <utility> // for pair
-#include <math.h>
+#include <algorithm> // neded for iter swap
+#include <iostream>
+#include <math.h> // needed for floor
 
-
-using namespace std;
 // T is the type of the item to be held
 // K is the type of the key associated with each item in the heap
 // The only requirement is that K is totally ordered and comparable via <
+
+using namespace std;
+
 template <class T, class K>
 class BinaryHeap {
- public:
-    // constructor not required because the only "initialization"
-    // is through the constructor of the variable "heap" which is called by default
+public:
+  // constructor not required because the only "initialization"
+  // is through the constructor of the variable "heap" which is called by default
 
-    // return the minimum element in the heap
-    pair<T, K> min() const {
-        // return the root node
-        return heap[0];
-    }
+  // return the minimum v in the heap
+  std::pair<T, K> min() const{
+    //return heap[0]; // return minimum pair
+    return heap.at(0);
+  }
 
-    // insert an item with the given key
-    // if the item is already in the heap, will still insert a new copy with this key
-    void insert(const T& item, const K& key) {
-        // let v be a new vertex at the end of the array/tree
-        pair<T, K> v(item, key);
-        heap.push_back(v);
-        int index = heap.size() - 1;
-        sift_up(index);
-    }
+  // insert an item with the given key
+  // if the item is already in the heap, will still insert a new copy with this key
+  void insert(const T& item, const K& key){
+  // steps on how to do this
+  //1) Pass item of key value where v is new vertex in the tree ie let v be a new vertex in the tree
+  //2) v is node that contains the pair(item,key) ie give v the pair(item,key)
+  //3) While loop (v is not the root and key(v)<key(parent(v)) )
+  //4) swap items and key between v and its parent if its true
+  //5) go up the tree and keep doing the same by letting v = parent(v)
+    std::pair<T,K > v;// this is v
+    v.first = item; // two vertexes
+    v.second = key; //manhatten distance;
 
 
-    // pop the minimum item from the heap
-    void popMin() {
-        // load the root node
-        //pair<T, K> root = heap.front();
-        heap.erase(heap.begin());  // remove root node
-        /*
-        pair<T, K> lastPair = heap.back();
-        heap.pop_back();
-        heap.insert(heap.begin(), lastPair);
-        */
-        heap[0] = heap[heap.size() - 1];
-        // heapify_down
-        sift_down(0);
-    }
+    heap.push_back(v);// pushing v into vector
+    int childIndex = size()-1; // subratact one since vectors are indexed from zero
+    // need to find the position of v we know initialy the position of v is the size
+    int parentIndex = parentindex(childIndex); // position of the parent
 
-    // returns the number of items held in the heap
-    int size() const {
-        // return the number of items in the heap
-        return heap.size();
-    } 
+    // this one probably doesn't work
+    //int keyParent = heap.second[parentIndex]
 
-    private:
-    // the array holding the heap
-    vector<pair<T, K> > heap;
+    std::pair<T,K > pairParent = heap.at(parentIndex);// key of parent
+    int keyParent = pairParent.second;
 
-    // feel free to add appropriate private methods to help implement some functions
+    std::pair<T,K > firstPosition = heap.at(0);
+    //std::pair< std::pair<long long, long long>, long long> firstPosition = min(); // could be better
+    int rootCost = firstPosition.second;
 
-    // heapify_up
-    // techie delight...
-    // https://www.techiedelight.com/min-heap-max-heap-implementation-c/
-    void sift_up(int i) {
-        if (i && heap[goParent(i)] > heap[i]) {
-            swap(heap[i], heap[goParent(i)]);
-            sift_up(goParent(i));
+    //while ((v.second != rootCost) && (v.second < keyParent )){
+    while ((key != rootCost) && (key < keyParent)){
+      // swap the items and keys between v and parent(v)
+      iter_swap(heap.begin() + parentIndex, heap.begin() + childIndex);
+      // setting the indexes and setting v to be the parent(v) locations
+      childIndex = parentIndex;
+      parentIndex = parentindex(childIndex); // index of new parent
+      pairParent = heap.at(parentIndex);// key of new parent
+      keyParent = pairParent.second;
+
+      // rechecking who is the root
+      firstPosition = heap.at(0);
+      //firstPosition = min(); // could be better
+      rootCost = firstPosition.second;
+      }
+  }
+  // pop the minimum item from the heap ie the very first index item in vector using min() first
+  void popMin(){
+    if (size() == 0){
+      cout << "heap is empty" <<endl;
+    }else{
+      std::pair<T,K > root = min();
+      int lastIndex = size()-1; // last index
+      int rootIndex = 0;
+      int vIndex;
+      int rightIndex;
+      int leftIndex;
+      //bool heapProperty = false;
+      int difference;
+      iter_swap(heap.begin() + rootIndex, heap.begin() + lastIndex);// swap the root with the
+      heap.pop_back(); // pop the last item from the vector
+      std::pair<T,K > v = min(); // set v is the root vertex
+      vIndex = v.second;
+      rightIndex = rightChildIndex(vIndex);
+      leftIndex = leftChildIndex(vIndex);
+      // since the heap vector we bring in is already all in order except root we move down the tree
+      // while heapProperty not satisfied
+      //while(heapProperty == false){
+        while ((vIndex > leftIndex) && (vIndex > rightIndex)){
+          difference = leftIndex - rightIndex;
+          if (difference <= 0){ // case where left side is smaller
+            // traverse the left side
+            //std::pair< std::pair<long long, long long>, long long> u = heap.at(leftIndex); // child of v with smallest key
+            iter_swap(heap.begin() + vIndex, heap.begin() + leftIndex);// swap item and key between u and v
+            vIndex = leftIndex;
+            rightIndex = rightChildIndex(vIndex);
+            leftIndex = leftChildIndex(vIndex);
+          } else if (difference > 0){ // case where right side is smaller
+            iter_swap(heap.begin() + vIndex, heap.begin() + rightIndex);// swap item and key between u and v
+            vIndex = rightIndex;
+            rightIndex = rightChildIndex(vIndex);
+            leftIndex = leftChildIndex(vIndex);
+          }
         }
+      //}
     }
 
+  }
 
-    // heapify_down
-    void sift_down(int i) {
-        unsigned int leftIndex = goLeft(i);
-        unsigned int rightIndex = goRight(i);
-        int smallVal = i;
 
-        if (leftIndex < heap.size() && heap[leftIndex] < heap[i]) {
-            smallVal = leftIndex;
-        }
-        if (rightIndex < heap.size() && heap[rightIndex] < heap[smallVal]) {
-            smallVal = rightIndex;
-        }
+  // returns the number of items held in the heap
+  int size() const{
+    // get the size of current instance of graph
+    int size = heap.size();
+    return size;
+  }
 
-        if (smallVal != i) {
-            swap(heap[i], heap[smallVal]);
-            sift_down(smallVal);
-        }
-    }
+  /*
+  int parentindex(int i);
 
-    int goLeft(int index) {
-        return (2*index + 1);
-    }
+  int leftChildIndex(int i);
 
-    int goRight(int index) {
-        return(2*index + 2);
-    }
+  int rightChildIndex(int i);
+  */
 
-    int goParent(int index) {
-        return (floor((index - 1) / 2));
-    }
+private:
+  // the array holding the heap
+  std::vector< std::pair<T, K> > heap; // holds current instance of the graph we are considering
+
+  // feel free to add appropriate private methods to help implement some functions
+  int parentindex(int i) {
+    return (floor((i-1)/2));
+  }
+
+  int leftChildIndex(int i){
+    return ((2*i) + 1);
+  }
+
+  int rightChildIndex(int i){
+    return ((2*i) + 2);
+  }
 
 };
+
+
+
+
 
 #endif
