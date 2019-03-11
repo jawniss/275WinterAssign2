@@ -1,0 +1,13 @@
+begin.lat 5365486
+begin.lon -11333915
+end.lat 5364728
+end.lon -11335891
+startVertex: 314088878
+endVertex: 629239028
+before dijkstra 
+before while loop 
+314088878 314088878 0
+inside while loop 
+tree found 
+finished iterating
+go into insert
