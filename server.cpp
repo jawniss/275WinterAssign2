@@ -216,7 +216,7 @@ int main() {
   pair<int,Point >vertex;
 
 
-  /*
+
   if (searchTree.find(endVertex) == searchTree.end()) {
     cout << "Vertex " << endVertex << " not reachable from " << startVertex << endl;
   }
@@ -255,7 +255,7 @@ int main() {
       }
     }
   }
-  */
+
   cout << "compiled" << endl;
   return 0;
 }
