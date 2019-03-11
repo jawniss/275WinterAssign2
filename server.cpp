@@ -12,6 +12,7 @@
 #include <string>
 #include <sstream>
 #include <utility> // for pair
+# include <stack> // std :: stack lives here
 
 using namespace std;
 
@@ -218,6 +219,57 @@ int main() {
   cout << "endVertex: " << endVertex << endl;
   unordered_map<int, PLI> searchTree;
   dijkstra(graph, startVertex, searchTree);
+
+
+  unordered_map<int,Point> pointSet;
+  stack<pointSet>path;
+
+  if (searchTree.find(endVertex) == searchTree.end()) {
+    cout << "Vertex " << endVertex << " not reachable from " << startVertex << endl;
+  }
+  else {
+    pointSet.first = endVertex;
+    pointSet.second.first = lat2;
+    pointSet.second.second = lon2;
+
+    while (pointSet.first != startVertex) {
+
+      path.push(PointSet); // adding one element looping backwards ??? yy
+
+      // crawl up the search tree one step
+      stepping = searchTree[pointSet.first].first;
+    }
+    pointSet.first = startVertex;
+    pointSet.second.first = lat1;
+    pointSet.second.second = lon1;
+    path.push(pointSet);
+    cout << "size of stack: " << path.size() << endl;
+
+    // for actaul program
+    cout << path.size() << endl;
+    while (true) {
+      cin >> code;
+      if (code == "A"){
+        if (!path.empty()){
+          pointSet = path.top();
+          path.pop();
+          cout << "W " << pointSet.second.first <<" "<< pointSet.second.first << endl;
+        }
+        else{
+          cout << "N  0" << endl;
+        }
+      }
+    }
+    /*
+    cout << "Cost of cheapest path from " << startVertex << " to "
+         << endVertex << " is: " << searchTree[endVertex].second << endl;
+    cout << "Path:";
+    for (auto it : path) {
+      cout << ' ' << it;
+    }
+    cout << endl;
+    */
+  }
   /*
   cout <<
   while(true){
