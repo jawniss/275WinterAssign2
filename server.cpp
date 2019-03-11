@@ -199,50 +199,43 @@ int main() {
         seekingEnd = newEndPoint;
         endVertex = iter.first;
       }
-
-      /*
-      if ((iter.second.lat == begin.lat) && (iter.second.lon == begin.lon)){
-        cout << "found start vertex" << endl;
-        startVertex = iter.first;
-      }
-      */
-      /*
-      if ((iter.second.lat == end.lat) && (iter.second.lon == end.lon)){
-        endVertex = iter.first;
-        cout << "found end vertex" << endl;
-
-      */
-
     }
   }
   cout << "startVertex: " << startVertex << endl;
   cout << "endVertex: " << endVertex << endl;
+
   unordered_map<int, PLI> searchTree;
   dijkstra(graph, startVertex, searchTree);
 
 
-  unordered_map<int,Point> pointSet;
-  stack<pointSet>path;
 
+
+  //unordered_map<int,Point> pointSet;
+  stack<pair<int,Point>>path;
+  pair<int,Point >vertex;
+
+
+  /*
   if (searchTree.find(endVertex) == searchTree.end()) {
     cout << "Vertex " << endVertex << " not reachable from " << startVertex << endl;
   }
+
   else {
-    pointSet.first = endVertex;
-    pointSet.second.first = lat2;
-    pointSet.second.second = lon2;
+    vertex.first = endVertex;
+    vertex.second.lat = lat2;
+    vertex.second.lon = lon2;
 
-    while (pointSet.first != startVertex) {
+    while (vertex.first != startVertex) {
 
-      path.push(PointSet); // adding one element looping backwards ??? yy
+      path.push(vertex);
 
       // crawl up the search tree one step
-      stepping = searchTree[pointSet.first].first;
+      vertex.first = searchTree[vertex.first].first;
     }
-    pointSet.first = startVertex;
-    pointSet.second.first = lat1;
-    pointSet.second.second = lon1;
-    path.push(pointSet);
+    vertex.first = startVertex;
+    vertex.second.lat = lat1;
+    vertex.second.lon = lon1;
+    path.push(vertex);
     cout << "size of stack: " << path.size() << endl;
 
     // for actaul program
@@ -251,34 +244,17 @@ int main() {
       cin >> code;
       if (code == "A"){
         if (!path.empty()){
-          pointSet = path.top();
+          vertex = path.top();
           path.pop();
-          cout << "W " << pointSet.second.first <<" "<< pointSet.second.first << endl;
+          cout << "W " << vertex.second.lat <<" "<< vertex.second.lon << endl;
         }
         else{
           cout << "N  0" << endl;
         }
       }
     }
-    /*
-    cout << "Cost of cheapest path from " << startVertex << " to "
-         << endVertex << " is: " << searchTree[endVertex].second << endl;
-    cout << "Path:";
-    for (auto it : path) {
-      cout << ' ' << it;
-    }
-    cout << endl;
-    */
-  }
-  /*
-  cout <<
-  while(true){
-    cin >> code;
-
   }
   */
-
-
   cout << "compiled" << endl;
   return 0;
 }
