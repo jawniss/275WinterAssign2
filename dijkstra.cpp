@@ -6,7 +6,7 @@
 #include "dijkstra.h"
 
 using namespace std;
-unordered_map< int, PLI> reached;
+unordered_map< int, int> reached;
 
 // void dijkstra(const WDigraph& graph, int startVertex,unordered_map<int, PLL>& searchTree) {
 void dijkstra(const WDigraph& graph, int startVertex, unordered_map<int, PLI>& tree){
@@ -36,10 +36,10 @@ return reached
   // insert the pair into events where their initial cost is 0
   events.insert(startingVertexPair,initialCost);
   // while size is not empty
-  cout << "before while loop "<< endl;
+  //cout << "before while loop "<< endl;
   while (events.size()!= 0) {
     std::pair< std::pair<int, int>, int> start = events.min();
-    cout << start.first.first << " " << start.first.second << " " << start.second << endl;
+    //cout << start.first.first << " " << start.first.second << " " << start.second << endl;
     // for (auto tracker = events.begin(); tracker != events.end(); ++tracker) {
     //   if (tracker->second.second < start->second.second) {
     //     start = tracker;
@@ -50,12 +50,12 @@ return reached
     int startKey = start.second;
     int u = startEdge.first;
     int v = startEdge.second;
-    cout << "inside while loop "<< endl;
+    //cout << "inside while loop "<< endl;
     if (tree.find(v) != tree.end()) {
       continue;
     }
     else {
-      cout << "tree found "<< endl;
+      //cout << "tree found "<< endl;
       bool insert = true;
       /*
       int cost = events.second;
@@ -73,19 +73,19 @@ return reached
         }
       }
 
-      cout << "finished iterating" << endl;
+      //cout << "finished iterating" << endl;
       // if v not in reached insert is true
       if (insert == true) {
-        cout << "go into insert" << endl;
+        //cout << "go into insert" << endl;
         pair<int, int > tempPair;
         tempPair.first = u;
         tempPair.second = v;
         reached.insert(tempPair);
-        cout << "hai" << endl;
+        //cout << "hai" << endl;
         std::pair<int,int> treePair;
         treePair.first = startKey;
         treePair.second = u;
-        cout << treePair.first << " " << treePair.second << endl;
+        //cout << treePair.first << " " << treePair.second << endl;
         tree[v] = treePair;
 
         // create one for each of its neighbors
@@ -102,3 +102,36 @@ return reached
     }
   }
 }
+
+/*
+#include "dijkstra.h"
+#include "heap.h"
+
+void dijkstra(const WDigraph& graph, int startVertex, unordered_map<int, PLI>& tree) {
+    tree = {};  // initialize tree to be empty
+    BinaryHeap<pair<int, int> ,ll> events;  // empty events heap
+    // insert first element of graph into heap 
+    pair<int, int> startPair(startVertex, startVertex);
+    events.insert(startPair, 0);
+
+    while (events.size() > 0) {
+        pair<pair<int, int>, ll> temp = events.min();  // getting root node
+        events.popMin();  // pop root node
+        pair<int, int> edge = temp.first;  // storing the edge
+        ll weight = temp.second;  // storing the weight
+        int u = edge.first;
+        int v = edge.second;
+
+        if (tree.find(v) == tree.end()) {
+            tree[v] = make_pair(weight, u);
+            for (auto iter = graph.neighbours(v);
+                 iter != graph.endIterator(v); iter++) {
+                pair<int, int> tempPair(v, *iter);  // making a temp pair
+                ll cost = graph.getCost(v, *iter);  // getting cost of the edge
+                events.insert(tempPair, weight + cost);  // inserting into the
+                                                         // events heap
+            }
+        }
+    }
+}
+*/
