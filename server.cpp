@@ -205,6 +205,7 @@ int main() {
   cout << "endVertex: " << endVertex << endl;
 
   unordered_map<int, PLI> searchTree;
+  cout << "before dijkstra " << endl;
   dijkstra(graph, startVertex, searchTree);
 
 

@@ -35,8 +35,10 @@ return reached
   // insert the pair into events where their initial cost is 0
   events.insert(startingVertexPair,initialCost);
   // while size is not empty
+  cout << "before while loop "<< endl;
   while (events.size()!= 0) {
     std::pair< std::pair<int, int>, int> start = events.min();
+    cout << start.first.first << " " << start.first.second << " " << start.second << endl;
     // for (auto tracker = events.begin(); tracker != events.end(); ++tracker) {
     //   if (tracker->second.second < start->second.second) {
     //     start = tracker;
@@ -47,12 +49,12 @@ return reached
     int startKey = start.second;
     int u = startEdge.first;
     int v = startEdge.second;
-
+    cout << "inside while loop "<< endl;
     if (tree.find(v) != tree.end()) {
       continue;
     }
     else {
-
+      cout << "tree found "<< endl;
       bool insert = true;
       /*
       int cost = events.second;
@@ -69,12 +71,19 @@ return reached
           insert = false;
         }
       }
+      cout << "finished iterating" << endl;
       // if v not in reached insert is true
       if (insert == true) {
-        reached[v] = u;
+        cout << "go into insert" << endl;
+        pair<int, int > tempPair;
+        tempPair.first = u;
+        tempPair.second = v;
+        reached.insert(tempPair);
+        cout << "hai" << endl;
         std::pair<int,int> treePair;
         treePair.first = startKey;
         treePair.second = u;
+        cout << treePair.first << " " << treePair.second << endl;
         tree[v] = treePair;
 
         // create one for each of its neighbors
