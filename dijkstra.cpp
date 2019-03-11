@@ -31,7 +31,7 @@ return reached
 
   BinaryHeap< std::pair<int, int>, int>  events;
   // inserting the starting vertex as a pair
-  pair<int, int>startingVertexPair(startVertex,startVertex);
+  std::pair<int, int>startingVertexPair(startVertex,startVertex);
   // insert the pair into events where their initial cost is 0
   events.insert(startingVertexPair,initialCost);
   // while size is not empty

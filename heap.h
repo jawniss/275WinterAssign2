@@ -21,13 +21,14 @@ public:
 
   // return the minimum v in the heap
   std::pair<T, K> min() const{
-    //return heap[0]; // return minimum pair
-    return heap.at(0);
+    return heap[0]; // return minimum pair
+    //return heap.at(0);
   }
+
   void print() {
     for (int i = 0; i < heap.size(); i++) {
       std::pair<T, K> show;
-      show = heap.at(i);
+      show = heap[i];
       cout << show.first << ' '<< show.second << endl;
     }
   }
@@ -54,10 +55,12 @@ public:
     // this one probably doesn't work
     //int keyParent = heap.second[parentIndex]
 
-    std::pair<T,K > pairParent = heap.at(parentIndex);// key of parent
+    //std::pair<T,K > pairParent = heap.at(parentIndex);// key of parent
+    std::pair<T,K > pairParent = heap[parentIndex];// key of parent
     int keyParent = pairParent.second;
 
-    std::pair<T,K > firstPosition = heap.at(0);
+    //std::pair<T,K > firstPosition = heap.at(0);
+    std::pair<T,K > firstPosition = heap[0];
     //std::pair< std::pair<long long, long long>, long long> firstPosition = min(); // could be better
     int rootCost = firstPosition.second;
 
@@ -68,11 +71,13 @@ public:
       // setting the indexes and setting v to be the parent(v) locations
       childIndex = parentIndex;
       parentIndex = parentindex(childIndex); // index of new parent
-      pairParent = heap.at(parentIndex);// key of new parent
+      //pairParent = heap.at(parentIndex);// key of new parent
+      pairParent = heap[parentIndex];// key of new parent
       keyParent = pairParent.second;
 
       // rechecking who is the root
-      firstPosition = heap.at(0);
+      //firstPosition = heap.at(0);
+      firstPosition = heap[0];
       //firstPosition = min(); // could be better
       rootCost = firstPosition.second;
       }
@@ -101,17 +106,20 @@ public:
       //std::pair<T,K > v = min(); // set v is the root vertex
       vIndex = rootIndex;
       //cout << "(inside)vindex: " << vIndex << endl;
-      std::pair<T, K> v = heap.at(vIndex);
+      //std::pair<T, K> v = heap.at(vIndex);
+      std::pair<T, K> v = heap[vIndex];
       vCost = v.second;
 
       rightIndex = rightChildIndex(vIndex);
       //cout << "(inside)rightindex: " << rightIndex << endl;
-      std::pair<T, K> right = heap.at(rightIndex);
+      //std::pair<T, K> right = heap.at(rightIndex);
+      std::pair<T, K> right = heap[rightIndex];
       rightCost = right.second;
 
       leftIndex = leftChildIndex(vIndex);
       //cout << "(inside)leftindex: " << leftIndex << endl;
-      std::pair<T, K> left = heap.at(leftIndex);
+      //std::pair<T, K> left = heap.at(leftIndex);
+      std::pair<T, K> left = heap[leftIndex];
       leftCost = left.second;
 
       // since the heap vector we bring in is already all in order except root we move down the tree
@@ -134,7 +142,8 @@ public:
             //std::pair< std::pair<long long, long long>, long long> u = heap.at(leftIndex); // child of v with smallest key
             iter_swap(heap.begin() + vIndex, heap.begin() + leftIndex);// swap item and key between u and v
             vIndex = leftIndex;
-            v = heap.at(vIndex);
+            //v = heap.at(vIndex);
+            v = heap[vIndex];
             vCost = v.second;
 
 
@@ -142,7 +151,8 @@ public:
             if (rightIndex > lastIndex){
               break;
             }else{
-              right = heap.at(rightIndex);
+              //right = heap.at(rightIndex);
+              right = heap[rightIndex];
               rightCost = right.second;
             }
 
@@ -150,7 +160,8 @@ public:
             if (leftIndex > lastIndex){
               break;
             }else{
-              left = heap.at(leftIndex);
+              //left = heap.at(leftIndex);
+              left = heap[leftIndex];
               leftCost = left.second;
             }
             /*
@@ -168,14 +179,16 @@ public:
 
             iter_swap(heap.begin() + vIndex, heap.begin() + rightIndex);// swap item and key between u and v
             vIndex = rightIndex;
-            v = heap.at(vIndex);
+            //v = heap.at(vIndex);
+            v = heap[vIndex];
             vCost = v.second;
 
             rightIndex = rightChildIndex(vIndex);
             if (rightIndex > lastIndex){
               break;
             }else{
-              right = heap.at(rightIndex);
+              //right = heap.at(rightIndex);
+              right = heap[rightIndex];
               rightCost = right.second;
             }
 
@@ -183,7 +196,8 @@ public:
             if (leftIndex > lastIndex){
               break;
             }else{
-              left = heap.at(leftIndex);
+              //left = heap.at(leftIndex);
+              left = heap[leftIndex];
               leftCost = left.second;
             }
             /*

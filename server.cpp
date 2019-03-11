@@ -1,6 +1,6 @@
 #include "wdigraph.h"
 #include "dijkstra.h"
-#include "digraph.h" // do we need?
+#include "digraph.h"
 
 #include <iostream>
 #include <queue>
@@ -12,10 +12,6 @@
 #include <string>
 #include <sstream>
 #include <utility> // for pair
-
-// from hash example
-#include <iomanip>
-#include <cassert>
 
 using namespace std;
 
@@ -73,6 +69,7 @@ void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& poin
   float latFloat;
   long long latitude;
   float lonFloat;
+  //float scale = 100000;
   long long longitude;
   ifstream infile (filename);
   // open the text file
@@ -94,15 +91,17 @@ void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& poin
           }
           if (countVert == 3){
             // convert value to float from string
-            latFloat = stof(tokenVert)*100000;
+            latFloat = stof(tokenVert);
             // convert to long long
-            latitude = static_cast <long long>(latFloat);
+            latitude = static_cast <long long>(latFloat*100000);
+            //cout << "latitude: " << latitude << endl;
           }
           if (countVert == 4){
             // convert value to float from string
-            lonFloat = stof(tokenVert)*100000;
+            lonFloat = stof(tokenVert);
             // convert to long long
-            longitude = static_cast <long long>(lonFloat);
+            longitude = static_cast <long long>(lonFloat*100000);
+            //cout << "llongie: " << longitude << endl;
           }
           // don't iterate the rest since we only need the vertex, longitude and latitude
           if (countVert > 4){
@@ -159,15 +158,75 @@ void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& poin
   }
 }
 
-
-
 int main() {
+  // get start vertex first find it by looking through all and seeing which is closest (in case cursor is in buildings or something)
+  // iterate through all vertices and and get the vertex ID with the smallest Manhattan dist
+  // make the sorting tree using the vertex returned
   WDigraph graph;
-  unordered_map<int, Point> points;
+  unordered_map<int,Point> points;
+  Point begin;
+  Point end;
+  string code;
+  long long lat1,lon1,lat2,lon2;
+  long long startVertex = 0;
+  long long endVertex = 0;
+  long long seekingStart = 200000;
+  long long seekingEnd = 200000;
   readGraph("edmonton-roads-2.0.1.txt", graph, points);
+  //readGraph("test.txt", graph, points);
+  cin >> code;
+  if (code == "R"){
+    cin >> lat1 >> lon1 >> lat2 >> lon2;
+    begin.lat = lat1;
+    begin.lon = lon1;
+    end.lat = lat2;
+    end.lon = lon2;
+    cout << "begin.lat " << begin.lat<< endl;
+    cout << "begin.lon " << begin.lon<< endl;
+    cout << "end.lat " << end.lat<< endl;
+    cout << "end.lon " << end.lon<< endl;
+    //long long threshold = manhattan(begin,end);// calculate the distance between start and end
+    for (auto iter: points) { // iterate through all vertices
+      long long newStartPoint = manhattan(begin,iter.second);
+      long long newEndPoint = manhattan(end,iter.second);
+      // find starting and end vertex
+      if (newStartPoint <= seekingStart){
+        seekingStart = newStartPoint;
+        startVertex = iter.first;
+      }
+      if (newEndPoint <= seekingEnd){
+        seekingEnd = newEndPoint;
+        endVertex = iter.first;
+      }
+
+      /*
+      if ((iter.second.lat == begin.lat) && (iter.second.lon == begin.lon)){
+        cout << "found start vertex" << endl;
+        startVertex = iter.first;
+      }
+      */
+      /*
+      if ((iter.second.lat == end.lat) && (iter.second.lon == end.lon)){
+        endVertex = iter.first;
+        cout << "found end vertex" << endl;
+
+      */
+
+    }
+  }
+  cout << "startVertex: " << startVertex << endl;
+  cout << "endVertex: " << endVertex << endl;
+  unordered_map<int, PLI> searchTree;
+  dijkstra(graph, startVertex, searchTree);
+  /*
+  cout <<
+  while(true){
+    cin >> code;
+
+  }
+  */
 
 
-    cout << "compiled" << endl;
-
-return 0;
+  cout << "compiled" << endl;
+  return 0;
 }
