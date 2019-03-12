@@ -1,136 +1,40 @@
-// #include <iostream>
-// #include <unordered_map>
-// #include <utility>
-//
-// #include "heap.h"
-// #include "dijkstra.h"
-//
-// using namespace std;
-// unordered_map< int, int> reached;
-//
-// // void dijkstra(const WDigraph& graph, int startVertex,unordered_map<int, PLL>& searchTree) {
-// void dijkstra(const WDigraph& graph, int startVertex, unordered_map<int, PLI>& tree){
-// /*
-// reached ← empty hash table (i.e., unordered map) X
-// events ← empty heap
-// events.insert((s,s),0)
-// while len(events) > 0 do
-//    (u, v), time ← events.popmin()
-//    if v not in reached then
-//     reached[v] ← u
-//     for each neighbour w of v do       # burn vertex v, record predecessor u
-//       #new event: edge (v,w) started burning
-//       events .insert ((v , w ), time + cost (v , w ))
-// return reached
-// */
-//
-// // unordered_map< pair <int, int>, int> reached;
-//   // initial cost is 0 since on same vertex
-//   int initialCost = 0;
-//   //unordered_map< int, int> reached;
-//
-//
-//   BinaryHeap< std::pair<int, int>, int>  events;
-//   // inserting the starting vertex as a pair
-//   std::pair<int, int>startingVertexPair(startVertex,startVertex);
-//   // insert the pair into events where their initial cost is 0
-//   events.insert(startingVertexPair,initialCost);
-//   // while size is not empty
-//   //cout << "before while loop "<< endl;
-//   while (events.size()!= 0) {
-//     std::pair< std::pair<int, int>, int> start = events.min();
-//     //cout << start.first.first << " " << start.first.second << " " << start.second << endl;
-//     // for (auto tracker = events.begin(); tracker != events.end(); ++tracker) {
-//     //   if (tracker->second.second < start->second.second) {
-//     //     start = tracker;
-//     //   }
-//     // }
-//     events.popMin();
-//     std::pair<int, int> startEdge = start.first;
-//     int startKey = start.second;
-//     int u = startEdge.first;
-//     int v = startEdge.second;
-//     //cout << "inside while loop "<< endl;
-//     if (tree.find(v) != tree.end()) {
-//       continue;
-//     }
-//     else {
-//       //cout << "tree found "<< endl;
-//       bool insert = true;
-//       /*
-//       int cost = events.second;
-//       int utemp = events.first;
-//       int u = utemp.first;
-//       int vtemp = events.first;
-//       int v = vtemp.second;
-//       */
-//
-//       //tree[v] = pair<int, int> (u, d);
-//
-//       for (auto itr = reached.begin(); itr != reached.end(); ++itr) {
-//         if (itr->first == v) {
-//           insert = false;
-//         }
-//       }
-//
-//       //cout << "finished iterating" << endl;
-//       // if v not in reached insert is true
-//       if (insert == true) {
-//         //cout << "go into insert" << endl;
-//         pair<int, int > tempPair;
-//         tempPair.first = u;
-//         tempPair.second = v;
-//         reached.insert(tempPair);
-//         //cout << "hai" << endl;
-//         std::pair<int,int> treePair;
-//         treePair.first = startKey;
-//         treePair.second = u;
-//         //cout << treePair.first << " " << treePair.second << endl;
-//         tree[v] = treePair;
-//
-//         // create one for each of its neighbors
-//         for (auto iter = graph.neighbours(v); iter != graph.endIterator(v); iter++) {
-//           int node = *iter;
-//           int cost = graph.getCost(v,node);
-//           std::pair<long long,int> insertPair;
-//           insertPair.first = (long long) v; // typecast v into long long
-//           insertPair.second = node;
-//           int newCost = startKey + cost;
-//           events.insert(insertPair, newCost);
-//         }
-//       }
-//     }
-//   }
-// }
-
-
 #include "dijkstra.h"
 #include "heap.h"
+#include <iostream>
 
-void dijkstra(const WDigraph& graph, int startVertex, unordered_map<int, PLI>& tree) {
-    tree = {};  // initialize tree to be empty
-    BinaryHeap<pair<int, int> ,long long> events;  // empty events heap
-    // insert first element of graph into heap
-    pair<int, int> startPair(startVertex, startVertex);
-    events.insert(startPair, 0);
+using namespace std;
 
-    while (events.size() > 0) {
-        pair<pair<int, int>, long long> temp = events.min();  // getting root node
-        events.popMin();  // pop root node
-        pair<int, int> edge = temp.first;  // storing the edge
-        long long weight = temp.second;  // storing the weight
-        int u = edge.first;
-        int v = edge.second;
+bool insert = true;
 
-        if (tree.find(v) == tree.end()) {
-            tree[v] = make_pair(weight, u);
-            for (auto iter = graph.neighbours(v);
-                 iter != graph.endIterator(v); iter++) {
-                pair<int, int> tempPair(v, *iter);  // making a temp pair
-                long long cost = graph.getCost(v, *iter);  // getting cost of the edge
-                events.insert(tempPair, weight + cost);  // inserting into the
-                                                         // events heap
-            }
-        }
+void dijkstra(const WDigraph& graph, int startVertex, unordered_map<int, PLI>& reached) {
+  pair<long long, long long> startingvertex(startVertex, startVertex);
+  BinaryHeap<pair<long long, long long>, long long> events;
+  int startingcost = 0;
+  events.insert(startingvertex, startingcost);
+  reached = {};
+  while (events.size() != 0) {
+    pair< pair<long long, long long>, long long> uvtime;
+    uvtime  = events.min();
+    events.popMin();
+    long long verticescost = uvtime.second;
+    pair<long long, long long> twovertices = uvtime.first;
+    long long vertex1 = twovertices.first;
+    long long vertex2 = twovertices.second;
+    insert = false;
+    if (reached.find(vertex2) == reached.end())
+      insert = true;
+    if (insert == true) {
+      pair<long long, long long> putinreached;
+      putinreached.first = verticescost;
+      putinreached.second = vertex1;
+      reached[vertex2] = putinreached;
+      for (auto itr = graph.neighbours(vertex2); itr != graph.endIterator(vertex2); ++itr) {
+        pair<long long, long long> putinevents;
+        putinevents.first = vertex2;
+        putinevents.second = *itr;
+        long long mostrecentcost = graph.getCost(vertex2, *itr);
+        events.insert(putinevents, verticescost + mostrecentcost);
+      }
     }
+  }
 }
