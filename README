@@ -1,0 +1,38 @@
+# ----------------------------------------------
+#   Name: Ricky Au, Johnas Wong
+#   ID: 1529429, 1529241
+#   CMPUT 275, Winter 2019
+#
+#   Assignment 2 part 1: Server
+# ----------------------------------------------
+Included files:
+
+  - digraph.cpp
+  - dijkstra.cpp
+  - edmonton-roads-2.0.1.txt
+  - heap.h
+  - Makefile
+  - server.cpp
+  - wdigraph.h
+
+Accessories:
+
+  - 1 Arduino Mega Board (AMG)
+  - AMG power cord
+
+Wiring instructions:
+  Connect power plug from Arduino to desired computer device
+
+Running instructions:
+  1. Enter the file directory and type "make server" in the terminal
+  2. In the terminal;
+    2.1. To write all program outputs into a separate file, type
+        "./server < test00-input.txt > mysol.txt"
+    2.1.1. To view outputs, find and open 'mysol.txt' file in directory
+  2.2. To manually feed in inputs, type "./server"
+    2.2.1. Insert input - the outputs should follow step by step
+
+Notes: None
+
+Sources:
+  - dijkstra slides on eClass for the pseudocode

@@ -1,49 +1,10 @@
-begin.lat 5365486
-begin.lon -11333915
-end.lat 5364728
-end.lon -11335891
-startVertex: 314088878
-endVertex: 629239028
-before dijkstra 
-1
-2
-before while loop 
-314088878 314088878 0
-3
-U and v: 
-314088878 314088878
-inside while loop 
-4
-tree found 
-4
-seg fault
-one
-two
-finished iterating
-test
-4
-hai
-past insert
-0 314088878
-after tree
-inside
-314088878 314088877 759
-5
-U and v: 
-314088878 314088877
-inside while loop 
-5
-tree found 
-5
-seg fault
-one
-two
-finished iterating
-test
-5
-hai
-past insert
-759 314088878
-after tree
-inside
-inside
+N 8
+W 5365488 -11333914
+W 5365238 -11334423
+W 5365157 -11334634
+W 5365035 -11335026
+W 5364789 -11335776
+W 5364774 -11335815
+W 5364756 -11335849
+W 5364727 -11335890
+E
