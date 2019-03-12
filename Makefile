@@ -5,20 +5,20 @@ PROGS= dijkstra server
 OBJS= server.o dijkstra.o digraph.o
 
 # executable targets
-all: server
+# main target server
+all: server dijkstra
 
+# target dijkstra that links dijkstra.o and digraph.o together
 dijkstra: dijkstra.o digraph.o
 	$(CC) dijkstra.o digraph.o -o dijkstra $(LFLAGS)
 
+# target server that links server.o, dijkstra.o and digraph.o
 server: server.o dijkstra.o digraph.o
 	$(CC) server.o dijkstra.o digraph.o -o server $(LFLAGS)
 
-tester: tester.cpp heap.h
-	$(CC) tester.cpp -o tester $(LFLAGS)
-
-
 # object targets
 
+# object target server.o that compiles the object
 server.o: server.cpp digraph.h wdigraph.h
 	$(CC) server.cpp -o server.o $(CFLAGS)
 
@@ -28,5 +28,6 @@ dijkstra.o: dijkstra.cpp dijkstra.h heap.h
 digraph.o: digraph.cpp digraph.h
 	$(CC) digraph.cpp -o digraph.o $(CFLAGS)
 
+# clean which removes objects and executables
 clean:
 	@rm $(OBJS) $(PROGS)
