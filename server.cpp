@@ -2,6 +2,7 @@
 #include "dijkstra.h"
 #include "digraph.h"
 
+
 #include <iostream>
 #include <unordered_map>
 #include <algorithm>
@@ -10,6 +11,10 @@
 #include <sstream>
 #include <utility> // for pair
 #include <stack> // std :: stack lives here
+
+
+#include "serialport.h"
+
 
 using namespace std;
 
@@ -129,6 +134,8 @@ void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& poin
 
 // main function that takes the job of communicating with stdin and stdout
 int main() {
+  SerialPort Serial("/dev/ttyACM0");
+
   WDigraph graph;
   unordered_map<int,Point> points;
   Point begin;
@@ -144,9 +151,66 @@ int main() {
   long long seekingEnd;
   bool readR == false;
   readGraph("edmonton-roads-2.0.1.txt", graph, points);
+
+
+  string input;
+
+
+
   // while loop to read in inputs
   while (true){
-    // case to wait until we read a R 
+    // case to wait until we read a R
+    /*
+    do {
+      input = Serial.readline();
+    } while (); // not sure if while loop needed
+    */
+    int word = 0;
+    input = Serial.readline(0);
+    if input.find("R"){
+      istringstream ss(input);
+      string token;
+      while (getline(ss,token,' ')){
+        word++;
+        if (word == 2){
+          // convert it from string to integer
+          lat1 = stoi(token,nullptr,10);
+        }
+        if (word == 3){
+          lon1 = stoi(token,nullptr,10);
+        }
+        if (word == 4 ){
+          lat2 = stoi(token,nullptr,10);
+        }
+        if (word == 5) {
+          lon2 = stoi(token,nullptr,10);
+        }
+        if (word > 5){
+          break;
+        }
+      }
+    }
+    // generate a random starting point for both start and end point
+    seekingStart = manhattan(begin,points[0]);
+    seekingEnd = manhattan(end,points[0]);
+    // iterate through all vertices
+    for (auto iter: points) {
+      // check every point iterating through
+      long long newStartPoint = manhattan(begin,iter.second);
+      long long newEndPoint = manhattan(end,iter.second);
+      // if cases new point found is closer than replace the previous point
+      if (newStartPoint < seekingStart){
+        startVertex = iter.first;
+        seekingStart = newStartPoint;
+      }
+      if (newEndPoint < seekingEnd){
+        endVertex = iter.first;
+        seekingEnd = newEndPoint;
+      }
+    }
+
+
+    /*
     while (readR == false){
       cin >> code;
       // case if we read "R" as first letter
@@ -177,6 +241,7 @@ int main() {
         readR = true;
       }
     }
+    */
     unordered_map<int, PLI> searchTree;
     // call dijkstra function
     dijkstra(graph, startVertex, searchTree);
