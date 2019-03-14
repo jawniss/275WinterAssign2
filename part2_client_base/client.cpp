@@ -91,6 +91,8 @@ void process_input() {
   }
 }
 
+SerialPort Serial("/dev/ttyACM0");
+
 int main() {
   setup();
 
@@ -146,6 +148,23 @@ int main() {
         end = get_cursor_lonlat();
 
         // TODO: communicate with the server to get the waypoints
+
+
+        long long startlon = start.lon * 100000;
+        long long startlat = start.lat * 100000;
+        long long endlon = end.lon * 100000;
+        long long endlat = end.lat * 100000;
+
+        Serial.writeline(startlon);
+        Serial.writeline(" ");
+        Serial.writeline(startlat);
+        Serial.writeline(" ");
+        Serial.writeline(endlon);
+        Serial.writeline(" ");
+        Serial.writeline(endlat);
+        Serial.writeline("\n");
+
+
 
         // now we have stored the path length in
         // shared.num_waypoints and the waypoints themselves in
