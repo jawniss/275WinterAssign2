@@ -184,44 +184,6 @@ int main() {
     cout << " input " << endl;
     cout << input << endl;
 
-    /*
-    string parsed;
-    istringstream ss(input);
-    int count = 0;
-    // obtain the u and v edges
-    while (getline(ss,parsed,' ')){
-      count++;
-      // take value after first comma
-      if (count == 2){
-        // convert it from string to integer
-        begin.lat = stoll(parsed);
-      }
-      // take value after second comma
-      if (count == 3){
-        // convirt it from string to integer
-        begin.lon = stoll(parsed);
-      }
-      if (count == 4){
-        // convirt it from string to integer
-        end.lat = stoll(parsed);
-      }
-      if (count == 5){
-        // convirt it from string to integer
-        end.lon = stoll(parsed);
-      }
-      // don't bother iterating the rest since we only need edges
-      if (count > 5){
-        break;
-      }
-    }
-    */
-    /*
-    cout << "before stream" << endl;
-    ifstream fin(input);
-    string line;
-    cout << "string line stuff" << endl;
-    //while (getline(fin,line)){
-    */
       cout << "getting line " << endl;
       // split string
       int at = 0;
@@ -266,13 +228,14 @@ int main() {
     // initialize a stack
     stack<int>path;
     finalPoint = last;
+    cout << "before looking for path" << endl;
     // while loop that pushes the path until we reach the end vertex
     while (path.top() != start) {
       path.push(finalPoint);
       // crawl up the searchtree one step at a time
       finalPoint = searchTree[finalPoint].second;
     }
-
+    cout << "found path" << endl;
     length = path.size();
     string lengthstr = to_string(length);
     if (length > 500){
@@ -299,7 +262,7 @@ int main() {
         cout << "input: " << input << endl;
         // if case for if we read a "A"
 
-        if (input == "A\n"){
+        if (input.find("A") != (string::npos) ){
           cout << "read A" << endl;
           // output the latitude and longitude of the point we are taking off the stack
           //cout << "W " << points[path.top()].lat << " " << points[path.top()].lon << endl;
@@ -328,7 +291,7 @@ int main() {
     } while (input=="");
       // output E since we are done
       cout << "E" << endl;
-      assert(Serial.writeline("E \n"));
+      assert(Serial.writeline("E \\n"));
     }
   }
 
