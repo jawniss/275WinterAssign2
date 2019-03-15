@@ -2,7 +2,7 @@ CC=g++
 CFLAGS=-c -Wall -O2 -std=c++11
 LFLAGS=
 PROGS= dijkstra server
-OBJS= server.o dijkstra.o digraph.o
+OBJS= server.o dijkstra.o digraph.o serialport.o
 
 # executable targets
 # main target server
@@ -13,8 +13,8 @@ dijkstra: dijkstra.o digraph.o
 	$(CC) dijkstra.o digraph.o -o dijkstra $(LFLAGS)
 
 # target server that links server.o, dijkstra.o and digraph.o
-server: server.o dijkstra.o digraph.o
-	$(CC) server.o dijkstra.o digraph.o -o server $(LFLAGS)
+server: server.o dijkstra.o digraph.o serialport.o
+	$(CC) server.o dijkstra.o digraph.o serialport.o -o server $(LFLAGS)
 
 # object targets
 
@@ -27,6 +27,9 @@ dijkstra.o: dijkstra.cpp dijkstra.h heap.h
 
 digraph.o: digraph.cpp digraph.h
 	$(CC) digraph.cpp -o digraph.o $(CFLAGS)
+
+serialport.o: serialport.cpp serialport.h
+	$(CC) serialport.cpp -o serialport.o $(CFLAGS)
 
 # clean which removes objects and executables
 clean:

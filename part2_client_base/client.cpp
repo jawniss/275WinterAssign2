@@ -9,6 +9,15 @@ shared_vars shared;
 
 Adafruit_ILI9341 tft = Adafruit_ILI9341(clientpins::tft_cs, clientpins::tft_dc);
 
+// max size of buffer, including null terminator
+const uint16_t buf_size = 256;
+// current number of chars in buffer, not counting null terminator
+uint16_t buf_len = 0;
+
+// input buffer
+char* buffer = (char *) malloc(buf_size);
+
+
 void setup() {
   // initialize Arduino
   init();
@@ -24,6 +33,15 @@ void setup() {
 
   // initialize serial port
   Serial.begin(9600);
+
+  Serial.println("PHASE01");
+  Serial.println("Client side is waiting for input.");
+  Serial.println("PHASE02");
+
+  // set up buffer as empty string
+  buf_len = 0;
+  buffer[buf_len] = 0;
+
   Serial.flush(); // get rid of any leftover bits
 
   // initially no path is stored
@@ -91,7 +109,17 @@ void process_input() {
   }
 }
 
-SerialPort Serial("/dev/ttyACM0");
+
+void process_line() {
+  // print what's in the buffer back to server
+  Serial.print("Got: ");
+  Serial.println(buffer);
+
+  // clear the buffer
+  buf_len = 0;
+  buffer[buf_len] = 0;
+}
+
 
 int main() {
   setup();
@@ -150,21 +178,44 @@ int main() {
         // TODO: communicate with the server to get the waypoints
 
 
-        long long startlon = start.lon * 100000;
-        long long startlat = start.lat * 100000;
-        long long endlon = end.lon * 100000;
-        long long endlat = end.lat * 100000;
-
-        Serial.writeline(startlon);
-        Serial.writeline(" ");
-        Serial.writeline(startlat);
-        Serial.writeline(" ");
-        Serial.writeline(endlon);
-        Serial.writeline(" ");
-        Serial.writeline(endlat);
-        Serial.writeline("\n");
+//points[id].lat = static_cast<long long>(stod(p[2])*100000);
+        Serial.print("R");
+        Serial.print(" ");
+        Serial.print(start.lat);
+        Serial.print(" ");
+        Serial.print(start.lon);
+        Serial.print(" ");
+        Serial.print(end.lat);
+        Serial.print(" ");
+        Serial.println(end.lon);
+        Serial.print("\n");
 
 
+        /*
+        while (true) {
+          char in_char;
+
+          if (Serial.available()) {
+              // read the incoming byte:
+              char acknowledgement = Serial.read();
+
+              // if end of line is received, waiting for line is done:
+              if (in_char == '\n' || in_char == '\r') {
+                  // now we process the buffer
+                  process_line();
+                  }
+              else {
+                  // add character to buffer, provided that we don't overflow.
+                  // drop any excess characters.
+                  if ( buf_len < buf_size-1 ) {
+                      buffer[buf_len] = in_char;
+                      buf_len++;
+                      buffer[buf_len] = 0;
+                  }
+                }
+            }
+          }
+          */
 
         // now we have stored the path length in
         // shared.num_waypoints and the waypoints themselves in

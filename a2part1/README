@@ -1,0 +1,41 @@
+# ----------------------------------------------
+#   Name: Ricky Au, Johnas Wong
+#   ID: 1529429, 1529241
+#   CMPUT 275, Winter 2019
+#
+#   Assignment 2 part 1: Server
+# ----------------------------------------------
+Included files:
+
+  - digraph.cpp
+  - dijkstra.cpp
+  - dijkstra.h
+  - heap.h
+  - Makefile
+  - server.cpp
+
+
+Running instructions:
+  1. Enter the file directory and type "make server" or "make" in the terminal
+  2. In the terminal;
+    2.1. For example to write all program outputs into a separate file, type
+        "./server < test00-input.txt > mysol.txt"
+    2.1.1. To view outputs, find and open 'mysol.txt' file in directory
+  2.2. To manually feed in inputs, type "./server"
+    2.2.1. Insert input - the outputs should follow step by step
+
+
+Sources:
+  - dijkstra slides on eClass for the pseudocode
+
+  - in heap.h minHeapify() function line 99
+    https://www.geeksforgeeks.org/binary-heap/
+
+  - in server.cpp void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& points) line 35-128
+    built off of Ricky Au's  Weekly Assignment 5
+
+  - inside readGraph function the use of long double to fix issues with latitudes and longitudes being one off
+    source https://eclass.srv.ualberta.ca/mod/forum/discuss.php?d=1146004 student Shohan Islam
+
+  - heap.h , wdigraph.h, digraph.h, dijkstra.cpp and dijkstra.h
+    all of these codes either originially given to us for this assignment or taken from class examples.

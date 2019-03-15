@@ -149,7 +149,7 @@ int main() {
   long long endVertex = 0;
   long long seekingStart;
   long long seekingEnd;
-  bool readR == false;
+  //bool readR == false;
   readGraph("edmonton-roads-2.0.1.txt", graph, points);
 
 
@@ -166,24 +166,32 @@ int main() {
     } while (); // not sure if while loop needed
     */
     int word = 0;
-    input = Serial.readline(0);
-    if input.find("R"){
+
+    input = Serial.readline();
+    cout << input << endl;
+
+    if (input.find("R")){
       istringstream ss(input);
       string token;
       while (getline(ss,token,' ')){
+        cout << "inside get line" << endl;
         word++;
         if (word == 2){
           // convert it from string to integer
           lat1 = stoi(token,nullptr,10);
+          cout << "lat1" << lat1 << endl;
         }
         if (word == 3){
           lon1 = stoi(token,nullptr,10);
+          cout << "lon1" << lon1 << endl;
         }
         if (word == 4 ){
           lat2 = stoi(token,nullptr,10);
+          cout << "lat2" << lat2 << endl;
         }
         if (word == 5) {
           lon2 = stoi(token,nullptr,10);
+          cout << "lon2" << lon2 << endl;
         }
         if (word > 5){
           break;
@@ -208,6 +216,12 @@ int main() {
         seekingEnd = newEndPoint;
       }
     }
+    cout << "compiled" << endl;
+    cout << seekingStart << endl;
+    cout << seekingEnd << endl;
+
+
+
 
 
     /*
@@ -241,7 +255,8 @@ int main() {
         readR = true;
       }
     }
-    */
+*/
+  /*
     unordered_map<int, PLI> searchTree;
     // call dijkstra function
     dijkstra(graph, startVertex, searchTree);
@@ -275,6 +290,9 @@ int main() {
     // output E since we are done
     cout << "E" << endl;
     break;
+    */
+
   }
+
   return 0;
 }
