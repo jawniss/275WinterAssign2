@@ -160,6 +160,7 @@ int main() {
   int counter = 0;
   string ln,lt;
   string p[5];
+  string a[1];
   //bool readR == false;
   readGraph("edmonton-roads-2.0.1.txt", graph, points);
 
@@ -214,16 +215,17 @@ int main() {
       }
     }
     */
-
+    /*
     cout << "before stream" << endl;
     ifstream fin(input);
     string line;
     cout << "string line stuff" << endl;
-    while (getline(fin,line)){
+    //while (getline(fin,line)){
+    */
       cout << "getting line " << endl;
       // split string
       int at = 0;
-      for (auto c: line){
+      for (auto c: input){
         if (c == ' '){
           cout << "in at" << endl;
           at++;
@@ -233,7 +235,7 @@ int main() {
         }
         assert(at < 5);
       }
-    }
+    //}
     if (p[0] == "R"){
       begin.lat = stoll(p[1]);
       begin.lon = stoll(p[2]);
@@ -245,47 +247,13 @@ int main() {
       cout << "lon2" << end.lon << endl;
     }
 
-
-    /*
-    int word = 0;
-    if (input.find("R")){
-      cout << "found R" << endl;
-      istringstream ss(input);
-      string token;
-      while (getline(ss,token,' ')){
-        cout << "inside get line" << endl;
-        word = word + 1;
-        cout << "word: " << word << endl;
-        if (word == 2){
-          // convert it from string to integer
-          lat1 = stoi(token,nullptr,10);
-          cout << "lat1" << lat1 << endl;
-        }
-        if (word == 3){
-          lon1 = stoi(token,nullptr,10);
-          cout << "lon1" << lon1 << endl;
-        }
-        if (word == 4 ){
-          lat2 = stoi(token,nullptr,10);
-          cout << "lat2" << lat2 << endl;
-        }
-        if (word == 5) {
-          lon2 = stoi(token,nullptr,10);
-          cout << "lon2" << lon2 << endl;
-        }
-        if (word > 5){
-          break;
-        }
-      }
-    }
-    */
     cout << "find closest" << endl;
     int start = findClosest(begin,points);
     int last = findClosest(end,points);
 
     cout << "compiled" << endl;
-    cout << "start: " << start << endl;
-    cout << "last: " <<last << endl;
+    //cout << "start: " << start << endl;
+    //cout << "last: " <<last << endl;
 
 
 
@@ -306,7 +274,7 @@ int main() {
     }
 
     length = path.size();
-
+    string lengthstr = to_string(length);
     if (length > 500){
       assert(Serial.writeline("N 0\\n"));
     }
@@ -314,32 +282,43 @@ int main() {
     else {
       cout << "N " << path.size() << endl;
       assert(Serial.writeline("N "));
-      assert(Serial.writeline(path.size()+"\n"));
+      assert(Serial.writeline(lengthstr));
+      assert(Serial.writeline("\n"));
 
 
       // start a while loop that will loop for the size of the stack
       while (counter != length){
 
-        counter++;
         // read in a letter
         //cin >> code;
+        cout << "before reading A" << endl;
         do {
         input = Serial.readline();
       } while (input=="");
-
+        cout << "passed getting a value" << endl;
+        cout << "input: " << input << endl;
         // if case for if we read a "A"
-        if (input == "A"){
+
+        if (input == "A\n"){
+          cout << "read A" << endl;
           // output the latitude and longitude of the point we are taking off the stack
           //cout << "W " << points[path.top()].lat << " " << points[path.top()].lon << endl;
           lt = to_string( points[path.top()].lat );
+          cout << "got lat" << endl;
           ln = to_string(points[path.top()].lon);
+          cout << "got lon" << endl;
           assert(Serial.writeline("W "));
+          cout << "sent W" << endl;
           assert(Serial.writeline(lt));
+          cout << "sent lat" << endl;
           assert(Serial.writeline(" "));
           assert(Serial.writeline(ln));
+          cout << "sent lon" << endl;
           assert(Serial.writeline("\n"));
+          cout << "newline" << endl;
           // pop what we outputed
           path.pop();
+          counter++;
         }
       }
       // last input that we will take in
@@ -349,7 +328,7 @@ int main() {
     } while (input=="");
       // output E since we are done
       cout << "E" << endl;
-      assert(Serial.writeline("E \\n"));
+      assert(Serial.writeline("E \n"));
     }
   }
 
