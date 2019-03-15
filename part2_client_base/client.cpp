@@ -34,9 +34,6 @@ void setup() {
   // initialize serial port
   Serial.begin(9600);
 
-  Serial.println("PHASE01");
-  Serial.println("Client side is waiting for input.");
-  Serial.println("PHASE02");
 
   // set up buffer as empty string
   buf_len = 0;
@@ -169,6 +166,7 @@ int main() {
 
         // wait until the joystick button is no longer pushed
         while (digitalRead(clientpins::joy_button_pin) == LOW) {}
+        delay(300);
       }
       else {
         // if we were waiting for the end point, record it
@@ -176,9 +174,6 @@ int main() {
         end = get_cursor_lonlat();
 
         // TODO: communicate with the server to get the waypoints
-
-
-//points[id].lat = static_cast<long long>(stod(p[2])*100000);
         Serial.print("R");
         Serial.print(" ");
         Serial.print(start.lat);
@@ -189,6 +184,10 @@ int main() {
         Serial.print(" ");
         Serial.println(end.lon);
         Serial.print("\n");
+        status_message("FROM?");
+
+
+//points[id].lat = static_cast<long long>(stod(p[2])*100000);
 
 
         /*
@@ -225,6 +224,7 @@ int main() {
 
         // wait until the joystick button is no longer pushed
         while (digitalRead(clientpins::joy_button_pin) == LOW) {}
+
       }
     }
 

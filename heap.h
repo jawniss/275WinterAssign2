@@ -1,16 +1,7 @@
-#ifndef _HEAP_H_
-#define _HEAP_H_
-
 #include <vector>
-#include <utility> // for pair
-#include <algorithm> // neded for iter swap
-#include <iostream>
-#include <math.h> // needed for floor
+#include <algorithm>
 
-// T is the type of the item to be held
-// K is the type of the key associated with each item in the heap
-// The only requirement is that K is totally ordered and comparable via <
-using namespace std;
+// Only assumes the key type K is totally ordered and comparable via <
 
 template <class T, class K>
 class BinaryHeap {
@@ -18,106 +9,112 @@ public:
   // constructor not required because the only "initialization"
   // is through the constructor of the variable "heap" which is called by default
 
-  // return the minimum v in the heap
-  std::pair<T, K> min() const{
-    return heap[0]; // return minimum pair
-  }
+  // return the minimum element in the heap
+  pair<T, K> min() const;
 
   // insert an item with the given key
   // if the item is already in the heap, will still insert a new copy with this key
-  void insert(const T& item, const K& key){
-    // v the new vertex in the tree
-    std::pair<T,K > v;
-    v.first = item;
-    v.second = key;
-    // pushing v into vector
-    heap.push_back(v);
-    // subratact one since vectors are indexed from zero
-    int childIndex = size()-1;
-    // need to find the position of v we know initialy the position of v is the size
-    int parentIndex = parentindex(childIndex);
-    std::pair<T,K > pairParent = heap[parentIndex];
-    int keyParent = pairParent.second;
-    std::pair<T,K > firstPosition = heap[0];
-    int rootCost = firstPosition.second;
-    // while v is not the root and key(v) < key(parent(V))
-    while ((key != rootCost) && (key < keyParent)){
-      // swap the items and keys between v and parent(v)
-      iter_swap(heap.begin() + parentIndex, heap.begin() + childIndex);
-      // setting the indexes and setting v to be the parent(v) locations
-      childIndex = parentIndex;
-      // index of new parent
-      parentIndex = parentindex(childIndex);
-      // key of new parent
-      pairParent = heap[parentIndex];
-      keyParent = pairParent.second;
-      // rechecking what is the root
-      firstPosition = heap[0];
-      rootCost = firstPosition.second;
-      }
-  }
-  // pop the minimum item from the heap ie the very first index item in vector using min() first
-  void popMin(){
-    int lastIndex = size()-1;
-    int minIndex = 0;
-    // swap the root with the first and last
-    iter_swap(heap.begin() + minIndex, heap.begin() + lastIndex);
-    // pop the last item from the vector (originally the root)
-    heap.pop_back();
-    // call heapify on the first index
-    minHeapify(0);
-  }
+  void insert(const T& item, const K& key);
+
+  // pop the minimum item from the heap
+  void popMin();
 
   // returns the number of items held in the heap
-  int size() const{
-    // get the size of current instance of graph
-    int size = heap.size();
-    return size;
-  }
+  int size() const;
 
 private:
   // the array holding the heap
-  std::vector< std::pair<T, K> > heap;
+  std::vector< pair<T, K> > heap;
 
-  // function that finds the parent index given an index
-  int parentindex(int i) {
-    return (floor((i-1)/2));
-  }
+  //  will fix the heap property at index i and interate with its parent
+  void fixHeapUp(int i);
 
-  // function that finds left child index given an index
-  int leftChildIndex(int i){
-    return ((2*i) + 1);
-  }
-
-  // function that finds the right child index givenan index
-  int rightChildIndex(int i){
-    return ((2*i) + 2);
-  }
-
-  // heapify source: https://www.geeksforgeeks.org/binary-heap/
-  // takes in an index then traverse that index until heap condition is satisfied
-  void minHeapify(int index){
-    int lChild = 0;
-    int rChild = 0;
-    int min = index;
-    int length = heap.size();
-    lChild = leftChildIndex(index);
-    rChild = rightChildIndex(index);
-    // if left child index less than length and value at that childs index is less than value at inputed index
-    if (lChild < length && heap[lChild].second < heap[index].second) {
-        min = lChild;
-    }
-    // if right child index less than length and value at that childs index is less than value at inputed index 
-    if (rChild < length && heap[rChild].second < heap[min].second) {
-        min = rChild;
-    }
-    //if we changed min index swap the positions of those and heapify again
-    if (min != index) {
-        swap(heap[index], heap[min]);
-        minHeapify(min);
-    }
-  }
-
+  // will fix the heap property at index i and iterate with the child
+  // that received i's item (if appropriate)
+  void fixHeapDown(int i);
 };
 
-#endif
+template <class T, class K>
+pair<T, K> BinaryHeap<T, K>::min() const {
+  // the underlying vector throws an exception if the heap is empty
+  return heap.at(0);
+}
+
+template <class T, class K>
+void BinaryHeap<T, K>::insert(const T& item, const K& key) {
+  pair<T, K> node(item, key);
+
+  // add the new item to the end of the heap
+  heap.push_back(node);
+
+  // fix the heap property
+  fixHeapUp(heap.size()-1);
+}
+
+template <class T, class K>
+void BinaryHeap<T, K>::popMin() {
+  // move the last item of the last layer to the top
+  // if the heap has size 1, this just pops it
+  heap[0] = heap.back();
+  heap.pop_back();
+
+  // if there is anything left in the heap, fix the heap property
+  if (heap.size() > 0) {
+    fixHeapDown(0);
+  }
+}
+
+template <class T, class K>
+int BinaryHeap<T, K>::size() const {
+  return heap.size();
+}
+
+template <class T, class K>
+void BinaryHeap<T, K>::fixHeapUp(int i) {
+  while (i > 0) {
+    int pi = (i-1)>>1; // parent index
+
+    // if i's key is smaller than its parent's key, swap it and go up
+    if (heap[i].second < heap[pi].second) {
+      std::swap(heap[i], heap[pi]);
+      i = pi;
+    }
+    else {
+      // otherwise, no more fixing needs to be done
+      return;
+    }
+  }
+}
+
+template <class T, class K>
+void BinaryHeap<T, K>::fixHeapDown(int i) {
+  while (true) {
+    // calculate indices of the two children
+    int lchild = (i<<1)+1, rchild = (i<<1)+2;
+
+    // if no children, no problem
+    if (lchild >= heap.size()) {
+      return;
+    }
+
+    int min_child;
+    // identify the child with the minimum key, being careful
+    // to handle the case where there is no right child
+    if (rchild >= heap.size() || heap[lchild].second < heap[rchild].second) {
+      min_child = lchild;
+    }
+    else {
+      min_child = rchild;
+    }
+
+    // if there is a violation of the heap property for i, swap its node
+    // with the node held by the minimum-key child and repeat with this child
+    if (heap[min_child].second < heap[i].second) {
+      std::swap(heap[i], heap[min_child]);
+      i = min_child;
+    }
+    else {
+      return;
+    }
+  }
+}
