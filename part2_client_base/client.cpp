@@ -170,36 +170,42 @@ void communication(lon_lat_32 start, lon_lat_32 end){
           }
       }
       input_split = strtok(input_str, " ");
-
-      if (input_split[0] == 'N') {
-        int waypointnumber = input_split[1];
-        input_split = strtok(NULL, " ");
+      if (input_split[0] != 'N' || input_split[0] != 'W'){
         Serial.flush();
         Serial.println('A');
-        Serial.setTimeout(1000);
-        //Serial.flush();
-      }
-      else if (input_split[0] == 'W'){
-        input_split = strtok(NULL," ");
-        uint32_t lat = atol(input_split);
-        input_split = strtok(NULL," ");
-        uint32_t lon = atol(input_split);
-        // store into shared variable
-        shared.waypoints[w_counter] = lon_lat_32(lon,lat);
-        Serial.flush();
-        Serial.println('A'); // send ack
-        //Serial.setTimeout(1000);
-        //Serial.flush();
-        w_counter++;
-      }
-
-      else if (input_split[0] == 'E') {
-         break;
       }
       else {
-        w_counter = 0;
-        break;
+        if (input_split[0] == 'N') {
+          int waypointnumber = input_split[1];
+          input_split = strtok(NULL, " ");
+          Serial.flush();
+          Serial.println('A');
+          Serial.setTimeout(1000);
+          //Serial.flush();
+        }
+        else if (input_split[0] == 'W'){
+          input_split = strtok(NULL," ");
+          uint32_t lat = atol(input_split);
+          input_split = strtok(NULL," ");
+          uint32_t lon = atol(input_split);
+          // store into shared variable
+          shared.waypoints[w_counter] = lon_lat_32(lon,lat);
+          Serial.flush();
+          Serial.println('A'); // send ack
+          Serial.setTimeout(1000);
+          //Serial.flush();
+          w_counter++;
+        }
+
+        else if (input_split[0] == 'E') {
+           break;
+        }
+        else {
+          w_counter = 0;
+          break;
+        }
       }
+
     }
   }
 }

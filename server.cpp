@@ -256,7 +256,7 @@ int main() {
             cout << "before reading A" << endl;
             do {
             inputAck = Serial.readline(1000);
-            cout << "inside looking for A loop" << endl;
+            //cout << "inside looking for A loop" << endl;
           } while (inputAck.find("A") == (string::npos));
             cout << "passed getting a value" << endl;
             cout << "inputAck: " << inputAck << endl;
