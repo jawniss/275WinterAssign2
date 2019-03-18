@@ -164,6 +164,7 @@ int main() {
   string ln,lt;
   string p[5];
   bool timeout = false;
+  bool pathisdone = false;
   //bool readR == false;
   readGraph("edmonton-roads-2.0.1.txt", graph, points);
 
@@ -173,11 +174,18 @@ int main() {
   while (true){
     // case to wait until we read a R
     cout << "start server " << endl;
+    timeout = false;
+    pathisdone = false;
 
-    while (timeout == false){
+    while ((timeout == false) && (pathisdone == false)){
       do {
         // timeout for readline
       inputcoord = Serial.readline(1000);
+      //if (inputcoord == ""){
+        //timeout = true;
+        //cout << "timeout" << endl;
+        //break;
+      //}
     } while (inputcoord.find("R") == (string::npos));
 
       cout << " inputcoord " << endl;
@@ -257,7 +265,8 @@ int main() {
             do {
             inputAck = Serial.readline(1000);
             if (inputAck == ""){
-              //cout << "took too long: rbeaking" << endl;
+              cout << "took too long: breaking" << endl;
+              timeout = true;
               break;
             }
             //cout << "inside looking for A loop" << endl;
@@ -298,9 +307,11 @@ int main() {
         } while (inputEnd=="");
           // output E since we are done
           cout << "E" << endl;
-          assert(Serial.writeline("E \\n"));
+          assert(Serial.writeline("E"));
+          assert(Serial.writeline("\n"));
+          pathisdone = true;
           //timeout == true;
-          cout <<"input coordinates: " <<inputcoord << endl;
+          cout <<" this was the input coordinates: " <<inputcoord << endl;
         }
 
       }
