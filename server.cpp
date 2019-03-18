@@ -158,142 +158,149 @@ int main() {
   int finalPoint;
   int length;
   int counter = 0;
+  string inputcoord;
+  string inputAck;
+  string inputEnd;
   string ln,lt;
   string p[5];
-  string a[1];
+  bool timeout = false;
   //bool readR == false;
   readGraph("edmonton-roads-2.0.1.txt", graph, points);
 
 
-  string input;
-  //char str[];
-  //int count = 0;
 
   // while loop to read in inputs
   while (true){
     // case to wait until we read a R
-    /*
-    do {
-      input = Serial.readline();
-    } while (); // not sure if while loop needed
-    */
+    cout << "start server " << endl;
 
-    do {
-    input = Serial.readline();
-  } while (input=="");
-    cout << " input " << endl;
-    cout << input << endl;
-
-      cout << "getting line " << endl;
-      // split string
-      int at = 0;
-      for (auto c: input){
-        if (c == ' '){
-          cout << "in at" << endl;
-          at++;
-        }
-        else {
-          p[at] += c;
-        }
-        assert(at < 5);
-      }
-    //}
-    if (p[0] == "R"){
-      begin.lat = stoll(p[1]);
-      begin.lon = stoll(p[2]);
-      end.lat = stoll(p[3]);
-      end.lon = stoll(p[4]);
-      cout << "lat1" << begin.lat << endl;
-      cout << "lon1" << begin.lon << endl;
-      cout << "lat2" << end.lat << endl;
-      cout << "lon2" << end.lon << endl;
-    }
-
-    cout << "find closest" << endl;
-    int start = findClosest(begin,points);
-    int last = findClosest(end,points);
-
-    cout << "compiled" << endl;
-    //cout << "start: " << start << endl;
-    //cout << "last: " <<last << endl;
-
-
-
-    unordered_map<int, PLI> searchTree;
-    cout << "after search tree" << endl;
-    // call dijkstra function
-    // seg fault here
-    dijkstra(graph, start, searchTree);
-    cout << "after dijkstra" << endl;
-    // initialize a stack
-    stack<int>path;
-    finalPoint = last;
-    cout << "before looking for path" << endl;
-    // while loop that pushes the path until we reach the end vertex
-    while (path.top() != start) {
-      path.push(finalPoint);
-      // crawl up the searchtree one step at a time
-      finalPoint = searchTree[finalPoint].second;
-    }
-    cout << "found path" << endl;
-    length = path.size();
-    string lengthstr = to_string(length);
-    if (length > 500){
-      assert(Serial.writeline("N 0\\n"));
-    }
-    // output the length
-    else {
-      cout << "N " << path.size() << endl;
-      assert(Serial.writeline("N "));
-      assert(Serial.writeline(lengthstr));
-      assert(Serial.writeline("\n"));
-
-
-      // start a while loop that will loop for the size of the stack
-      while (counter != length){
-
-        // read in a letter
-        //cin >> code;
-        cout << "before reading A" << endl;
-        do {
-        input = Serial.readline();
-      } while (input=="");
-        cout << "passed getting a value" << endl;
-        cout << "input: " << input << endl;
-        // if case for if we read a "A"
-
-        if (input.find("A") != (string::npos) ){
-          cout << "read A" << endl;
-          // output the latitude and longitude of the point we are taking off the stack
-          //cout << "W " << points[path.top()].lat << " " << points[path.top()].lon << endl;
-          lt = to_string( points[path.top()].lat );
-          cout << "got lat" << endl;
-          ln = to_string(points[path.top()].lon);
-          cout << "got lon" << endl;
-          assert(Serial.writeline("W "));
-          cout << "sent W" << endl;
-          assert(Serial.writeline(lt));
-          cout << "sent lat" << endl;
-          assert(Serial.writeline(" "));
-          assert(Serial.writeline(ln));
-          cout << "sent lon" << endl;
-          assert(Serial.writeline("\n"));
-          cout << "newline" << endl;
-          // pop what we outputed
-          path.pop();
-          counter++;
-        }
-      }
-      // last input that we will take in
-      //cin >> code;
+    while (timeout == false){
       do {
-      input = Serial.readline();
-    } while (input=="");
-      // output E since we are done
-      cout << "E" << endl;
-      assert(Serial.writeline("E \\n"));
+        // timeout for readline
+      inputcoord = Serial.readline(1000);
+    } while (inputcoord.find("R") == (string::npos));
+
+      cout << " inputcoord " << endl;
+      cout << inputcoord << endl;
+
+        cout << "getting line " << endl;
+        // split string
+        int at = 0;
+        for (auto c: inputcoord){
+          if (c == ' '){
+            cout << "in at" << endl;
+            at++;
+          }
+          else {
+            p[at] += c;
+          }
+          assert(at < 5);
+        }
+      //}
+        if (p[0] == "R"){
+          begin.lat = stoll(p[1]);
+          begin.lon = stoll(p[2]);
+          end.lat = stoll(p[3]);
+          end.lon = stoll(p[4]);
+          cout << "lat1" << begin.lat << endl;
+          cout << "lon1" << begin.lon << endl;
+          cout << "lat2" << end.lat << endl;
+          cout << "lon2" << end.lon << endl;
+        }
+
+        cout << "find closest" << endl;
+        int start = findClosest(begin,points);
+        int last = findClosest(end,points);
+
+        cout << "compiled" << endl;
+        cout << "start: " << start << endl;
+        cout << "last: " <<last << endl;
+
+
+
+        unordered_map<int, PLI> searchTree;
+        cout << "after search tree" << endl;
+        // call dijkstra function
+        // seg fault here
+        dijkstra(graph, start, searchTree);
+        cout << "after dijkstra" << endl;
+        // initialize a stack
+        stack<int>path;
+        finalPoint = last;
+        cout << "before looking for path" << endl;
+        // while loop that pushes the path until we reach the end vertex
+        while (path.top() != start) {
+          path.push(finalPoint);
+          // crawl up the searchtree one step at a time
+          finalPoint = searchTree[finalPoint].second;
+        }
+        cout << "found path" << endl;
+        length = path.size();
+        string lengthstr = to_string(length);
+        if ((length > 500) || (length == 0)){
+          assert(Serial.writeline("N 0\\n"));
+        }
+        // output the length
+        else {
+          cout << "N " << path.size() << endl;
+          assert(Serial.writeline("N "));
+          assert(Serial.writeline(lengthstr));
+          assert(Serial.writeline("\n"));
+
+
+          // start a while loop that will loop for the size of the stack
+          while (counter != length){
+
+            // read in a letter
+            //cin >> code;
+            cout << "before reading A" << endl;
+            do {
+            inputAck = Serial.readline(1000);
+            cout << "inside looking for A loop" << endl;
+          } while (inputAck.find("A") == (string::npos));
+            cout << "passed getting a value" << endl;
+            cout << "inputAck: " << inputAck << endl;
+            // if case for if we read a "A"
+
+            if (inputAck.find("A") != (string::npos) ){
+              cout << "read A" << endl;
+              // output the latitude and longitude of the point we are taking off the stack
+              //cout << "W " << points[path.top()].lat << " " << points[path.top()].lon << endl;
+              lt = to_string( points[path.top()].lat );
+              cout << "got lat" << endl;
+              ln = to_string(points[path.top()].lon);
+              cout << "got lon" << endl;
+              assert(Serial.writeline("W "));
+              cout << "sent W" << endl;
+              assert(Serial.writeline(lt));
+              cout << "sent lat: " << lt << endl;
+              assert(Serial.writeline(" "));
+              assert(Serial.writeline(ln));
+              cout << "sent lon: " << ln << endl;
+              assert(Serial.writeline("\n"));
+              cout << "newline" << endl;
+              // pop what we outputed
+              path.pop();
+              counter++;
+            }
+            else {
+              cout << "didnt get an A " << endl;
+            }
+          }
+          // last input that we will take in
+          //cin >> code;
+          do {
+          inputEnd = Serial.readline(1000);
+        } while (inputEnd=="");
+          // output E since we are done
+          cout << "E" << endl;
+          assert(Serial.writeline("E \\n"));
+          //timeout == true;
+        }
+
+      }
+
     }
-  }
 
   return 0;
 }

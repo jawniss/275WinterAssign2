@@ -130,6 +130,80 @@ void process_input() {
 //   buffer[buf_len] = 0;
 // }
 
+void communication(lon_lat_32 start, lon_lat_32 end){
+  bool pathisdone = false;
+  int w_counter;
+  //int startTime = millis();
+  // TODO: communicate with the server to get the waypoints
+  while(pathisdone == false) {
+    Serial.flush();
+    Serial.print("R");
+    Serial.print(" ");
+    Serial.print(start.lat);
+    Serial.print(" ");
+    Serial.print(start.lon);
+    Serial.print(" ");
+    Serial.print(end.lat);
+    Serial.print(" ");
+    Serial.println(end.lon);
+    Serial.print("\n");
+    Serial.flush();
+    status_message("FROM?");
+    Serial.setTimeout(10000);
+    while (true) {
+      char input_str[500];
+      int used = 0;
+      char *input_split;
+      char in_char;
+      while (true) {
+        while (Serial.available() == 0);
+          // read the incoming byte:
+          input_str[used] = Serial.read();
+          used++;
+
+          // if end of line is received, waiting for line is done:
+          if (input_str[used-1] == '\n') {
+              // now we process the buffer
+              input_str[used - 1] = '\0';
+              used = 0;
+              break;
+          }
+      }
+      input_split = strtok(input_str, " ");
+
+      if (input_split[0] == 'N') {
+        int waypointnumber = input_split[1];
+        input_split = strtok(NULL, " ");
+        Serial.flush();
+        Serial.println('A');
+        Serial.setTimeout(1000);
+        //Serial.flush();
+      }
+      else if (input_split[0] == 'W'){
+        input_split = strtok(NULL," ");
+        uint32_t lat = atol(input_split);
+        input_split = strtok(NULL," ");
+        uint32_t lon = atol(input_split);
+        // store into shared variable
+        shared.waypoints[w_counter] = lon_lat_32(lon,lat);
+        Serial.flush();
+        Serial.println('A'); // send ack
+        //Serial.setTimeout(1000);
+        //Serial.flush();
+        w_counter++;
+      }
+
+      else if (input_split[0] == 'E') {
+         break;
+      }
+      else {
+        w_counter = 0;
+        break;
+      }
+    }
+  }
+}
+
 
 int main() {
   setup();
@@ -186,69 +260,9 @@ int main() {
         // and then communicate with the server to get the path
         end = get_cursor_lonlat();
 
-        bool pathisdone = false;
-        int w_counter;
-        // TODO: communicate with the server to get the waypoints
-        while(pathisdone == false) {
-          Serial.print("R");
-          Serial.print(" ");
-          Serial.print(start.lat);
-          Serial.print(" ");
-          Serial.print(start.lon);
-          Serial.print(" ");
-          Serial.print(end.lat);
-          Serial.print(" ");
-          Serial.println(end.lon);
-          Serial.print("\n");
-          status_message("FROM?");
-          while (true) {
-            char input_str[500];
-            int used = 0;
-            char *input_split;
-            char in_char;
-            while (true) {
-              while (Serial.available() == 0);
-                // read the incoming byte:
-                input_str[used] = Serial.read();
-                used++;
+        communication(start,end);
 
-                // if end of line is received, waiting for line is done:
-                if (input_str[used-1] == '\n') {
-                    // now we process the buffer
-                    input_str[used - 1] = '\0';
-                    used = 0;
-                    break;
-                }
-            }
-            input_split = strtok(input_str, " ");
 
-            if (input_split[0] == 'N') {
-              int waypointnumber = input_split[1];
-              input_split = strtok(NULL, " ");
-              Serial.println('A');
-              //Serial.print("\n");
-              Serial.setTimeout(1000);
-            }
-            else if (input_split[0] == 'W'){
-              input_split = strtok(NULL," ");
-              uint32_t lat = atol(input_split);
-              input_split = strtok(NULL," ");
-              uint32_t lon = atol(input_split);
-              // store into shared variable
-              shared.waypoints[w_counter] = lon_lat_32(lon,lat);
-              Serial.println('A'); // send ack
-              w_counter++;
-         }
-
-        else if (input_split[0] == 'E') {
-           break;
-        }
-        else {
-          w_counter = 0;
-          break;
-        }
-     }
-   }
         // now we have stored the path length in
         // shared.num_waypoints and the waypoints themselves in
         // the shared.waypoints[] array, switch back to asking for the
