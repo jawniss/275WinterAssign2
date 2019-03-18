@@ -256,6 +256,10 @@ int main() {
             cout << "before reading A" << endl;
             do {
             inputAck = Serial.readline(1000);
+            if (inputAck == ""){
+              //cout << "took too long: rbeaking" << endl;
+              break;
+            }
             //cout << "inside looking for A loop" << endl;
           } while (inputAck.find("A") == (string::npos));
             cout << "passed getting a value" << endl;
@@ -296,6 +300,7 @@ int main() {
           cout << "E" << endl;
           assert(Serial.writeline("E \\n"));
           //timeout == true;
+          cout <<"input coordinates: " <<inputcoord << endl;
         }
 
       }
