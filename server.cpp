@@ -180,7 +180,7 @@ int main() {
     while ((timeout == false) && (pathisdone == false)){
       do {
         // timeout for readline
-      inputcoord = Serial.readline(1000);
+      inputcoord = Serial.readline(2000);
       //if (inputcoord == ""){
         //timeout = true;
         //cout << "timeout" << endl;
