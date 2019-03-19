@@ -185,8 +185,9 @@ void communication(lon_lat_32 start, lon_lat_32 end){
       }
       else if (input_split[0] == 'E') {
         //Serial.print("hi");
+        waveCounter = 0;
         pathisdone = true;
-        break;
+        //break;
       }
       else {
         waveCounter = 0;
@@ -199,7 +200,7 @@ void communication(lon_lat_32 start, lon_lat_32 end){
 void drawLines(lon_lat_32 start,lon_lat_32 end){
 
   //Draw the whole path by looping through
-  for(int i = 1; i <  (wavepoints); i++){
+  for(int i = 1; i < (wavepoints); i++){
     //same drawing method
     int32_t startingX = longitude_to_x(shared.map_number,shared.waypoints[i].lon) - shared.map_coords.x;
     int32_t startingY = latitude_to_y(shared.map_number,shared.waypoints[i].lat) - shared.map_coords.y;

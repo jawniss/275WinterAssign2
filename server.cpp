@@ -157,7 +157,6 @@ int main() {
   string code;
   int finalPoint;
   int length;
-  int counter = 0;
   string inputcoord;
   string inputAck;
   string inputEnd;
@@ -176,7 +175,7 @@ int main() {
     cout << "start server " << endl;
     timeout = false;
     pathisdone = false;
-
+    int counter = 0;
     while ((timeout == false) && (pathisdone == false)){
       do {
         // timeout for readline
@@ -223,8 +222,6 @@ int main() {
         cout << "compiled" << endl;
         cout << "start: " << start << endl;
         cout << "last: " <<last << endl;
-
-
 
         unordered_map<int, PLI> searchTree;
         cout << "after search tree" << endl;
