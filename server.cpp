@@ -276,7 +276,7 @@ int main() {
             // if case for if we read a "A"
 
             if (inputAck.find("A") != (string::npos) ){
-              cout << "read A" << endl;
+              cout << "read A" << inputAck << endl;
               // output the latitude and longitude of the point we are taking off the stack
               //cout << "W " << points[path.top()].lat << " " << points[path.top()].lon << endl;
               lt = to_string( points[path.top()].lat );

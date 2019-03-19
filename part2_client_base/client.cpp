@@ -11,8 +11,7 @@ shared_vars shared;
 
 Adafruit_ILI9341 tft = Adafruit_ILI9341(clientpins::tft_cs, clientpins::tft_dc);
 
-int waypointnumber;
-
+int wavepoints;
 // max size of buffer, including null terminator
 // const uint16_t buf_size = 256;
 // current number of chars in buffer, not counting null terminator
@@ -46,7 +45,7 @@ void setup() {
   Serial.flush(); // get rid of any leftover bits
 
   // initially no path is stored
-  waypointnumber = 0;
+  //wavepoints = 0;
 
   // initialize display
   shared.tft = &tft;
@@ -110,30 +109,6 @@ void process_input() {
   }
 }
 
-//void drawingPath (){
-
-//}
-
-
-// void process_line() {
-//   // print what's in the buffer back to server
-//
-//   string temp = buffer[0];
-//   if (temp == "N") {
-//     Serial.print("A");
-//     Serial.print("\n");
-//
-//   }
-//   Serial.print("Got: ");
-//   Serial.println(buffer);
-//
-//   // clear the buffer
-//   buf_len = 0;
-//   buffer[buf_len] = 0;
-// }
-
-
-
 
 void communication(lon_lat_32 start, lon_lat_32 end){
   bool pathisdone = false;
@@ -180,21 +155,29 @@ void communication(lon_lat_32 start, lon_lat_32 end){
       //startTime = millis();
 
       if (input_split[0] == 'N') {
-        waypointnumber = input_split[1];
         input_split = strtok(NULL, " ");
+        String waypointnumber = String(input_split);
+        //String waypointnumber = input_split[1];
+        //status_message(waypointnumber);
+        wavepoints = waypointnumber.toInt();
+
         Serial.flush();
+        Serial.print(wavepoints);
         Serial.print("A\n");
         Serial.setTimeout(1000);
         Serial.flush();
       }
       else if (input_split[0] == 'W'){
         input_split = strtok(NULL," ");
-        uint32_t lat = atol(input_split);
+        int32_t lat = atol(input_split);
         input_split = strtok(NULL," ");
-        uint32_t lon = atol(input_split);
+        int32_t lon = atol(input_split);
         // store into shared variable
         shared.waypoints[w_counter] = lon_lat_32(lon,lat);
         Serial.flush();
+        Serial.print(lat);
+        Serial.print(" ");
+        Serial.print(lon);
         Serial.print("A\n"); // send ack
         Serial.setTimeout(1000);
         Serial.flush();
@@ -220,18 +203,18 @@ void communication(lon_lat_32 start, lon_lat_32 end){
   }
 }
 
-void drawLine(lon_lat_32 start,lon_lat_32 end){
-  int32_t startx = longitude_to_x(shared.map_number,start.lon) - shared.map_coords.x;
-  int32_t starty = latitude_to_y(shared.map_number,start.lat) - shared.map_coords.y;
-  int32_t endx = longitude_to_x(shared.map_number,shared.waypoints[0].lon) - shared.map_coords.x;
-  int32_t endy = latitude_to_y(shared.map_number,shared.waypoints[0].lat) - shared.map_coords.y;
-  //we do not want it to draw the expected area on the display
-  startx = constrain(startx,0,320);
-  endx = constrain(endx,0,320);
-  starty = constrain(starty,0,216);
-  endy = constrain(endy,0,216);
+void drawLines(lon_lat_32 start,lon_lat_32 end){
 
-  shared.tft-> drawLine(startx,starty,endx,endy,ILI9341_BLUE);
+  // int32_t startx = longitude_to_x(shared.map_number,start.lon) - shared.map_coords.x;
+  // int32_t starty = latitude_to_y(shared.map_number,start.lat) - shared.map_coords.y;
+  // int32_t endx = longitude_to_x(shared.map_number,shared.waypoints[0].lon) - shared.map_coords.x;
+  // int32_t endy = latitude_to_y(shared.map_number,shared.waypoints[0].lat) - shared.map_coords.y;
+  // //we do not want it to draw the expected area on the display
+  // startx = constrain(startx,0,320);
+  // endx = constrain(endx,0,320);
+  // starty = constrain(starty,0,216);
+  // endy = constrain(endy,0,216);
+  // shared.tft-> drawLine(startx,starty,endx,endy,ILI9341_BLUE);
 
 
   // shared.tft-> drawLine(longitude_to_x(shared.map_number, start.lon)-shared.map_coords.x,
@@ -240,30 +223,31 @@ void drawLine(lon_lat_32 start,lon_lat_32 end){
   // latitude_to_y(shared.map_number, shared.waypoints[0].lat)-shared.map_coords.y,ILI9341_BLUE);
 
   //Draw lines between all the intermediate waypoints
-  for(int k = 0; k<(waypointnumber-1); k++){
+  for(int i = 0; i <  (wavepoints-1); i++){
     //same drawing method
-    int32_t startway_x = longitude_to_x(shared.map_number,shared.waypoints[k].lon) - shared.map_coords.x;
-    int32_t startway_y = latitude_to_y(shared.map_number,shared.waypoints[k].lat) - shared.map_coords.y;
-    int32_t endway_x = longitude_to_x(shared.map_number,shared.waypoints[k+1].lon) - shared.map_coords.x;
-    int32_t endway_y = latitude_to_y(shared.map_number,shared.waypoints[k+1].lat) - shared.map_coords.y;
+    int32_t startway_x = longitude_to_x(shared.map_number,shared.waypoints[i].lon) - shared.map_coords.x;
+    int32_t startway_y = latitude_to_y(shared.map_number,shared.waypoints[i].lat) - shared.map_coords.y;
+    int32_t endway_x = longitude_to_x(shared.map_number,shared.waypoints[i+1].lon) - shared.map_coords.x;
+    int32_t endway_y = latitude_to_y(shared.map_number,shared.waypoints[i+1].lat) - shared.map_coords.y;
 
     startway_x = constrain(startway_x,0,320);
     endway_x = constrain(endway_x,0,320);
     startway_y = constrain(startway_y,0,216);
     endway_y = constrain(endway_y,0,216);
     shared.tft-> drawLine(startway_x,startway_y,endway_x,endway_y,ILI9341_BLUE);
+    // break;
   }
 
-  //Draw last line between end and previous waypoint
-  startx = longitude_to_x(shared.map_number,shared.waypoints[waypointnumber-1].lon) - shared.map_coords.x;
-  starty = latitude_to_y(shared.map_number,shared.waypoints[waypointnumber-1].lat) - shared.map_coords.y;
-  endx = longitude_to_x(shared.map_number,end.lon)-shared.map_coords.x;
-  endy = latitude_to_y(shared.map_number,end.lat)-shared.map_coords.y;
-  startx = constrain(startx,0,320);
-  endx = constrain(endx,0,320);
-  starty = constrain(starty,0,216);
-  endy = constrain(endy,0,216);
-  shared.tft-> drawLine(startx,starty,endx,endy,ILI9341_BLUE);
+  // //Draw last line between end and previous waypoint
+  // startx = longitude_to_x(shared.map_number,shared.waypoints[wavepoints-1].lon) - shared.map_coords.x;
+  // starty = latitude_to_y(shared.map_number,shared.waypoints[wavepoints-1].lat) - shared.map_coords.y;
+  // endx = longitude_to_x(shared.map_number,end.lon)-shared.map_coords.x;
+  // endy = latitude_to_y(shared.map_number,end.lat)-shared.map_coords.y;
+  // startx = constrain(startx,0,320);
+  // endx = constrain(endx,0,320);
+  // starty = constrain(starty,0,216);
+  // endy = constrain(endy,0,216);
+  // shared.tft-> drawLine(startx,starty,endx,endy,ILI9341_BLUE);
 }
 
 
@@ -350,7 +334,7 @@ int main() {
       draw_cursor();
 
       // TODO: draw the route if there is one
-      drawLine(start,end);
+      drawLines(start,end);
     }
   }
 
