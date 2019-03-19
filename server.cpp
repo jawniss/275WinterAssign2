@@ -1,7 +1,7 @@
 #include "wdigraph.h"
 #include "dijkstra.h"
 #include "digraph.h"
-
+#include "serialport.h"
 
 #include <iostream>
 #include <unordered_map>
@@ -14,9 +14,6 @@
 #include <cstdlib>
 #include <cassert>
 
-#include "serialport.h"
-
-
 using namespace std;
 
 // struct given to us that stores latitude and longitude
@@ -26,7 +23,7 @@ struct Point {
 
 };
 
-// Return the Manhattan distance between the two given points
+// Return the Manhattan distance between the two given points from part 1 solutions given to us
 long long manhattan(const Point& pt1, const Point& pt2) {
   long long latitude1 = pt1.lat;
   long long latitude2 = pt2.lat;
@@ -36,7 +33,7 @@ long long manhattan(const Point& pt1, const Point& pt2) {
   return distance;
 }
 
-// finds the id of the point that is closest to the given point "pt"
+// finds the id of the point that is closest to the given point "pt" taken from part 1 solutions
 int findClosest(const Point& pt, const unordered_map<int, Point>& points) {
   pair<int, Point> best = *points.begin();
 
@@ -50,7 +47,7 @@ int findClosest(const Point& pt, const unordered_map<int, Point>& points) {
 }
 
 
-// reading the city graph function that takes in a string text file
+// reading the city graph function that takes in a string text file from part 1 solutions given to us
 void readGraph(string filename, WDigraph& graph, unordered_map<int, Point>& points){
   Point coordinates;
   Point point1;
@@ -164,10 +161,7 @@ int main() {
   string p[5];
   bool timeout = false;
   bool pathisdone = false;
-  //bool readR == false;
   readGraph("edmonton-roads-2.0.1.txt", graph, points);
-
-
 
   // while loop to read in inputs
   while (true){
@@ -175,27 +169,17 @@ int main() {
     cout << "start server " << endl;
     timeout = false;
     pathisdone = false;
-    int counter = 0;
     while ((timeout == false) && (pathisdone == false)){
+      int counter = 0;
       do {
-        // timeout for readline
+        // timeout for readline increased to 2 seconds since it seemed more consistent
       inputcoord = Serial.readline(2000);
-      //if (inputcoord == ""){
-        //timeout = true;
-        //cout << "timeout" << endl;
-        //break;
-      //}
     } while (inputcoord.find("R") == (string::npos));
 
-      cout << " inputcoord " << endl;
-      cout << inputcoord << endl;
-
-        cout << "getting line " << endl;
-        // split string
+        // split string taken from readgraph above
         int at = 0;
         for (auto c: inputcoord){
           if (c == ' '){
-            cout << "in at" << endl;
             at++;
           }
           else {
@@ -203,94 +187,67 @@ int main() {
           }
           assert(at < 5);
         }
-      //}
+        // case for if an R is read
         if (p[0] == "R"){
+          // set the broken up string and take the values from string to long longs
           begin.lat = stoll(p[1]);
           begin.lon = stoll(p[2]);
           end.lat = stoll(p[3]);
           end.lon = stoll(p[4]);
-          cout << "lat1" << begin.lat << endl;
-          cout << "lon1" << begin.lon << endl;
-          cout << "lat2" << end.lat << endl;
-          cout << "lon2" << end.lon << endl;
         }
-
-        cout << "find closest" << endl;
+        // find closest vertex for both starting point and end point
         int start = findClosest(begin,points);
         int last = findClosest(end,points);
 
-        cout << "compiled" << endl;
-        cout << "start: " << start << endl;
-        cout << "last: " <<last << endl;
-
         unordered_map<int, PLI> searchTree;
-        cout << "after search tree" << endl;
         // call dijkstra function
-        // seg fault here
         dijkstra(graph, start, searchTree);
-        cout << "after dijkstra" << endl;
         // initialize a stack
         stack<int>path;
         finalPoint = last;
-        cout << "before looking for path" << endl;
         // while loop that pushes the path until we reach the end vertex
         while (path.top() != start) {
           path.push(finalPoint);
           // crawl up the searchtree one step at a time
           finalPoint = searchTree[finalPoint].second;
         }
-        cout << "found path" << endl;
         length = path.size();
         string lengthstr = to_string(length);
+        // case for if the number of vertices is 0 and if vertices is greater than 500
         if ((length > 500) || (length == 0)){
           assert(Serial.writeline("N 0\\n"));
         }
-        // output the length
+        // output the number of vertices for the client
         else {
           cout << "N " << path.size() << endl;
           assert(Serial.writeline("N "));
           assert(Serial.writeline(lengthstr));
           assert(Serial.writeline("\n"));
 
-
           // start a while loop that will loop for the size of the stack
           while (counter != length){
-
-            // read in a letter
-            //cin >> code;
-            cout << "before reading A" << endl;
             do {
             inputAck = Serial.readline(1000);
+            // timeout if it takes too long to recieve an acknowledgement
             if (inputAck == ""){
-              cout << "took too long: breaking" << endl;
               timeout = true;
               break;
             }
-            //cout << "inside looking for A loop" << endl;
           } while (inputAck.find("A") == (string::npos));
-            cout << "passed getting a value" << endl;
-            cout << "inputAck: " << inputAck << endl;
-            // if case for if we read a "A"
 
+            // if an A was found
             if (inputAck.find("A") != (string::npos) ){
-              cout << "read A" << inputAck << endl;
-              // output the latitude and longitude of the point we are taking off the stack
-              //cout << "W " << points[path.top()].lat << " " << points[path.top()].lon << endl;
-              lt = to_string( points[path.top()].lat );
-              cout << "got lat" << endl;
+              // output the latitude and longitude of the point we are taking off the stack for client to store
+              lt = to_string( points[path.top()].lat);
               ln = to_string(points[path.top()].lon);
-              cout << "got lon" << endl;
               assert(Serial.writeline("W "));
-              cout << "sent W" << endl;
               assert(Serial.writeline(lt));
-              cout << "sent lat: " << lt << endl;
               assert(Serial.writeline(" "));
               assert(Serial.writeline(ln));
-              cout << "sent lon: " << ln << endl;
               assert(Serial.writeline("\n"));
-              cout << "newline" << endl;
               // pop what we outputed
               path.pop();
+              // increment counter
               counter++;
             }
             else {
@@ -298,22 +255,17 @@ int main() {
             }
           }
           // last input that we will take in
-          //cin >> code;
           do {
           inputEnd = Serial.readline(1000);
         } while (inputEnd=="");
           // output E since we are done
-          cout << "E" << endl;
           assert(Serial.writeline("E"));
           assert(Serial.writeline("\n"));
           pathisdone = true;
-          //timeout == true;
-          cout <<" this was the input coordinates: " <<inputcoord << endl;
+          // output the coordinates just to show they are different if you try to draw again
+          cout <<"this was the input coordinates: " << inputcoord << endl;
         }
-
       }
-
     }
-
   return 0;
 }

@@ -12,14 +12,6 @@ shared_vars shared;
 Adafruit_ILI9341 tft = Adafruit_ILI9341(clientpins::tft_cs, clientpins::tft_dc);
 
 int wavepoints;
-// max size of buffer, including null terminator
-// const uint16_t buf_size = 256;
-// current number of chars in buffer, not counting null terminator
-// uint16_t buf_len = 0;
-
-// input buffer
-// char* buffer = (char *) malloc(buf_size);
-
 
 void setup() {
   // initialize Arduino
@@ -36,16 +28,10 @@ void setup() {
 
   // initialize serial port
   Serial.begin(9600);
-
-
-  // set up buffer as empty string
-  // buf_len = 0;
-  // buffer[buf_len] = 0;
-
   Serial.flush(); // get rid of any leftover bits
 
   // initially no path is stored
-  //wavepoints = 0;
+  shared.num_waypoints = 0;
 
   // initialize display
   shared.tft = &tft;
@@ -109,87 +95,88 @@ void process_input() {
   }
 }
 
-
-void communication(lon_lat_32 start, lon_lat_32 end){
+// user defined function that takes in the beginning and end lon/lats to communicate with server
+void communication(lon_lat_32 begin, lon_lat_32 last){
   bool pathisdone = false;
   int waveCounter;
-  int startTime , endTime;
-  //int startTime = millis();
   // TODO: communicate with the server to get the waypoints
+  // while loop that continues unless we have finished all communications
   while(pathisdone == false) {
+    // print statements that send the R and the lat/lons along with the newline
     Serial.flush();
     Serial.print("R");
     Serial.print(" ");
-    Serial.print(start.lat);
+    Serial.print(begin.lat);
     Serial.print(" ");
-    Serial.print(start.lon);
+    Serial.print(begin.lon);
     Serial.print(" ");
-    Serial.print(end.lat);
+    Serial.print(last.lat);
     Serial.print(" ");
-    Serial.println(end.lon);
+    Serial.println(last.lon);
     Serial.print("\n");
     Serial.flush();
     status_message("recieving path ...");
+    // sets the maximum milliseconds to wait for serial data to 10 seconds when waiting for number of points
     Serial.setTimeout(10000);
     while (pathisdone == false) {
-      char input_str[500];
-      int used = 0;
-      char *input_split;
-      char in_char;
+      // charecter array that will store the inputs
+      char line[500];
+      int words = 0;
+      char *split;
       while (true) {
         while (Serial.available() == 0);
-          // read the incoming byte:
-          input_str[used] = Serial.read();
-          used++;
-
-          // if end of line is received, waiting for line is done:
-          if (input_str[used-1] == '\n') {
-              // now we process the buffer
-              input_str[used - 1] = '\0';
-              used = 0;
+          // read in words from serial.read
+          line[words] = Serial.read();
+          words++;
+          // if newline is found
+          if (line[words-1] == '\n') {
+              // process buffer
+              line[words - 1] = '\0';
+              words = 0;
               break;
           }
       }
-      input_split = strtok(input_str, " ");
-
-      //startTime = millis();
-
-      if (input_split[0] == 'N') {
-        input_split = strtok(NULL, " ");
-        String waypointnumber = String(input_split);
-        //String waypointnumber = input_split[1];
-        //status_message(waypointnumber);
+      // split strings into tokens using space as delimeter
+      split = strtok(line, " ");
+      // if case if first value read in is a N
+      if (split[0] == 'N') {
+        split = strtok(NULL, " ");
+        // convert the char into a string
+        String waypointnumber = String(split);
+        // convert the string to an integer
         wavepoints = waypointnumber.toInt();
-
+        // send an A as acknowledgement
         Serial.flush();
-        Serial.print(wavepoints);
         Serial.print("A\n");
+        // sets the maximum milliseconds to wait for serial data for 1 second
         Serial.setTimeout(1000);
         Serial.flush();
       }
-      else if (input_split[0] == 'W'){
-        input_split = strtok(NULL," ");
-        int32_t lat = atol(input_split);
-        input_split = strtok(NULL," ");
-        int32_t lon = atol(input_split);
-        // store into shared variable
+      // case if a W is recieved
+      else if (split[0] == 'W'){
+        split = strtok(NULL," ");
+        // convert the latitude into int32_t
+        int32_t lat = atol(split);
+        split = strtok(NULL," ");
+        // convert the longintude into int32_t
+        int32_t lon = atol(split);
+        // store into shared variable along with a counter that stores the lon lat sent over from server
         shared.waypoints[waveCounter] = lon_lat_32(lon,lat);
         Serial.flush();
-        Serial.print(lat);
-        Serial.print(" ");
-        Serial.print(lon);
-        Serial.print("A\n"); // send ack
+        // send acknowledgement after you recieve lon lat
+        Serial.print("A\n");
+        // sets the maximum milliseconds to wait for serial data for 1 second for new point
         Serial.setTimeout(1000);
         Serial.flush();
         waveCounter++;
       }
-      else if (input_split[0] == 'E') {
-        //Serial.print("hi");
+      // case to end if an E is read
+      else if (split[0] == 'E') {
         waveCounter = 0;
         pathisdone = true;
-        //break;
       }
       else {
+        // break and restart if we don't recieve the correct letter (should never happen)
         waveCounter = 0;
         break;
       }
@@ -197,23 +184,22 @@ void communication(lon_lat_32 start, lon_lat_32 end){
   }
 }
 
+// function that draws the lines of the values sent to us from server
 void drawLines(lon_lat_32 start,lon_lat_32 end){
-
-  //Draw the whole path by looping through
+  // loop that draws the whole path
   for(int i = 1; i < (wavepoints); i++){
-    //same drawing method
-    int32_t startingX = longitude_to_x(shared.map_number,shared.waypoints[i].lon) - shared.map_coords.x;
-    int32_t startingY = latitude_to_y(shared.map_number,shared.waypoints[i].lat) - shared.map_coords.y;
-    int32_t endingX = longitude_to_x(shared.map_number,shared.waypoints[i+1].lon) - shared.map_coords.x;
-    int32_t endingY = latitude_to_y(shared.map_number,shared.waypoints[i+1].lat) - shared.map_coords.y;
-
+    int32_t startingX = (longitude_to_x(shared.map_number,shared.waypoints[i].lon) - shared.map_coords.x);
+    int32_t startingY = (latitude_to_y(shared.map_number,shared.waypoints[i].lat) - shared.map_coords.y);
+    int32_t endingX = (longitude_to_x(shared.map_number,shared.waypoints[i+1].lon) - shared.map_coords.x);
+    int32_t endingY = (latitude_to_y(shared.map_number,shared.waypoints[i+1].lat) - shared.map_coords.y);
+    // case that only draws the lines between vertexes if they are within the tft display and not on the status bar
     if ((startingX < 320) && (startingX > 0) && (endingX < 320) && (endingX > 0) && (startingY < 216) && (startingY > 0) && (endingY < 216) && (endingY > 0)){
       shared.tft-> drawLine(startingX,startingY,endingX,endingY,ILI9341_BLUE);
     }
   }
 }
 
-
+// main function that loops and manages the button presses and calls the communication and drawing functions
 int main() {
   setup();
 
@@ -262,6 +248,7 @@ int main() {
 
         // wait until the joystick button is no longer pushed
         while (digitalRead(clientpins::joy_button_pin) == LOW) {}
+        // needed this since sometimes button would count two clicks for just one
         delay(300);
       }
       else {
@@ -269,6 +256,7 @@ int main() {
         // and then communicate with the server to get the path
         end = get_cursor_lonlat();
 
+        // after recieving a two points we may begin communication with server
         communication(start,end);
 
         // now we have stored the path length in
@@ -279,7 +267,6 @@ int main() {
         shared.redraw_map = 1;
         // wait until the joystick button is no longer pushed
         while (digitalRead(clientpins::joy_button_pin) == LOW) {}
-
       }
     }
 
@@ -297,6 +284,7 @@ int main() {
       draw_cursor();
 
       // TODO: draw the route if there is one
+      // draw the route
       drawLines(start,end);
     }
   }
