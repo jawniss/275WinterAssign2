@@ -1,0 +1,96 @@
+# ----------------------------------------------
+#   Name: Ricky Au, Johnas Wong
+#   ID: 1529429, 1529241
+#   CMPUT 275, Winter 2019
+#
+#   Assignment 2 part 2: Driving Route Finder Client
+# ----------------------------------------------
+Included Files Folder : Server
+  * server.cpp
+  * digraph.cpp
+  * digraph.h
+  * dijkstra.cpp
+  * dijkstra.h
+  * heap.h
+  * wdigraph.h
+  * serialport.cpp
+  * serialport.h
+  * Makefile
+
+Included Files Folder : Client
+    * client.cpp
+    * consts_and_types.h
+    * lcd_image.cpp
+    * lcd_image.h
+    * map_drawing.cpp
+    * map_drawing.h
+    * Makefile
+Included Files:
+    * README
+
+Accessories:
+    * 1 Arduino Mega Board (AMG)
+    * 19 wires
+    * 1 Adafruit ILI9341 (display)
+    * 1 SainSmart JoyStick
+    * 1 micro sd card preloaded with lcd_image.h and lcd_image.cpp
+
+Wiring instructions:
+    Source: Wiring from circuit-wiring.txt
+    TFT Display:
+
+              The display pins are numbered left to right in this document when they are being viewed
+              with their labels showing rightside up. Note you do not require the touchscreen for this assignment,
+              so it is probably a lot easier to not wire the Y+/X+/Y-/X- pins.
+
+              Display Pin     Arduino Mega Pin
+              1 GND           BB GND bus
+              2 Vin           BB Vcc (+ive) bus
+              4 CLK           Pin 52
+              5 MISO          Pin 50
+              6 MOSI          Pin 51
+              7 CS            Pin 10
+              8 D/C           Pin 9
+              19 CCS          Pin 6
+
+          Zoom in and out buttons:
+              Button          Arduino Mega Pin
+              Zoom In         Pin 2
+              Zoom Out        Pin 3
+
+          Joystick connections:
+              Joystick Pin    Arduino Mega Pin
+              +5v             Vcc
+              GND             GND
+              VRx             Analog 1
+              VRy             Analog 0
+              SW              Pin 8
+
+All files that were changed:
+    1)  client.cpp added two new functions in that are called in the main they are drawlines and communcation
+    2)  server.cpp most changes were added in the main as thats where the communications occurs
+Running Instructions:
+    1) enter the file directory for client folder and type "make upload && serial-mon" into the terminal then enter
+    2) then press "(Ctrl)(A)" then "x" then enter
+    3) next navigate to the server folder and type "make server" into terminal then enter
+    4) then type "./server" then enter
+    5) you may now move the cursor and pick two points on the map pressing the joystick inwards to select your positions
+      5.1) you may press the buttons if installed to zoom in or out which will retain the drawn closest path
+    6) now wait for the screen to draw your closest path between the two points
+    7) I was unable to implement multiple path drawings under one compile but if you want to see that the values are actually computed you may look at the terminal as it shows all computations of the new path just doesn't seem to draw it
+NOTES and Assumptions:
+    1) I was unable to implement more than one path drawn so if you would like to compute another path recompile following the above running instructions
+    2) Sometimes if you run steps 1-5 the program will hang (ie you don't see N# within 5 seconds you may need to recompile) which seems to always cause my serial moniter to lock the next time you compile (see below on the most reliable way I found to unlocking serial-mon)
+    3) Sometimes if you try to begin or end in a area with not many paths nearby we get a segmentation fault best to just rerun the instructions and not get so close to those areas
+
+Unlock Serial-Mon:
+    1) unplug arduino then replug in
+    2) type "1" then enter for next two screens
+    3) This fixed my locking issues everytime
+Sources:
+    1) all part 1 implementations were taken from eclass
+    2) server.cpp lines 179 to 196 were built off of provided readgraph function from eclass
+    3) client.cpp all setTimeout() https://www.arduino.cc/en/Serial/SetTimeout
+    4) client.cpp drawline http://wiki.microduinoinc.com/Tft.drawLine()
+    5) client.cpp all strtok http://www.cplusplus.com/reference/cstring/strtok/
+    6) client.cpp line 147 https://www.arduino.cc/reference/en/language/variables/data-types/string/functions/toint/
